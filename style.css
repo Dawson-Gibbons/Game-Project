@@ -4,12 +4,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
 }
 #game-container {
-    width: 100%;
-    max-width: 800px;
-    aspect-ratio: 16 / 9;
+    width: 100vw;
+    height: 100vh;
 }
-canvas { display: block; width: 100% !important; height: auto !important; }
+canvas { display: block; }
