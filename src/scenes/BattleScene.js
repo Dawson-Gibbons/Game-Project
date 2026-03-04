@@ -88,18 +88,18 @@ export class BattleScene extends Phaser.Scene {
     }
 
     setupUI(width, height) {
-        // Villain HP bar
-        this.villainHpBar = new HealthBar(this, width * 0.52, 30, 200, 14, this.villainData.hp, 0xcc4444);
+        // Villain HP bar — y=44 gives label room above it (label sits at y≈26)
+        this.villainHpBar = new HealthBar(this, width * 0.52, 44, 200, 14, this.villainData.hp, 0xcc4444);
         this.villainHpBar.setLabel(this.villainData.name);
         this.villainHpBar.setValue(this.villainData.hp, this.villainData.hp);
 
-        // Player HP bar
-        this.playerHpBar = new HealthBar(this, 30, height * 0.62, 180, 14, this.player.maxHp, 0x44cc44);
+        // Player HP bar — pushed down to 0.68 so label clears the player sprite (~y262)
+        this.playerHpBar = new HealthBar(this, 30, height * 0.68, 180, 14, this.player.maxHp, 0x44cc44);
         this.playerHpBar.setLabel('Elmwood Warrior');
         this.playerHpBar.setValue(this.player.hp, this.player.maxHp);
 
-        // Player Stamina bar
-        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.62 + 28, 180, 10, this.player.maxStamina);
+        // Player Stamina bar — 26px below HP bar, leaves gap before text box at height-110
+        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.68 + 26, 180, 10, this.player.maxStamina);
         this.playerStaminaBar.setLabel('Stamina');
         this.playerStaminaBar.setValue(this.player.stamina, this.player.maxStamina);
 
@@ -382,11 +382,17 @@ export class BattleScene extends Phaser.Scene {
     showDefeatOptions() {
         const { width, height } = this.cameras.main;
 
-        const retryBtn = this.add.text(width * 0.35, height * 0.75, '[ Try Again ]', {
+        // Place buttons in the battle-menu area (right half of bottom panel) so they
+        // don't overlap the TextBox on the left.
+        const centerX = width * 0.74;
+        const panelBg = this.add.rectangle(centerX, height - 55, width * 0.48, 80, 0x111111, 0.9);
+        panelBg.setStrokeStyle(2, 0xff4444);
+
+        const retryBtn = this.add.text(centerX, height - 75, '[ Try Again ]', {
             fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-        const returnBtn = this.add.text(width * 0.65, height * 0.75, '[ Return to Map ]', {
+        const returnBtn = this.add.text(centerX, height - 40, '[ Return to Map ]', {
             fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
