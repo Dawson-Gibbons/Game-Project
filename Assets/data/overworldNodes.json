@@ -1,0 +1,17 @@
+{
+    "nodes": [
+        { "id": "start", "x": 650, "y": 400, "label": "Entrance", "type": "start" },
+        { "id": "training_zone", "x": 520, "y": 370, "label": "Training Zone", "type": "training" },
+        { "id": "alchemist_a", "x": 430, "y": 310, "label": "Alchemist A", "type": "villain", "requiredDefeated": null, "villainId": "alchemist_a" },
+        { "id": "junky_j", "x": 300, "y": 250, "label": "Junky J", "type": "villain", "requiredDefeated": "alchemist_a", "villainId": "junky_j" },
+        { "id": "dopey_d", "x": 450, "y": 170, "label": "Dopey D", "type": "villain", "requiredDefeated": "junky_j", "villainId": "dopey_d" },
+        { "id": "tweaker_t", "x": 350, "y": 80, "label": "Tweaker T", "type": "villain", "requiredDefeated": "dopey_d", "villainId": "tweaker_t" }
+    ],
+    "edges": [
+        ["start", "training_zone"],
+        ["start", "alchemist_a"],
+        ["alchemist_a", "junky_j"],
+        ["junky_j", "dopey_d"],
+        ["dopey_d", "tweaker_t"]
+    ]
+}

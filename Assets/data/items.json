@@ -1,0 +1,9 @@
+{
+    "ghetto_potion": {
+        "name": "Ghetto Potion",
+        "type": "heal",
+        "healAmount": 25,
+        "maxPerFight": 3,
+        "description": "Heals 25 HP"
+    }
+}

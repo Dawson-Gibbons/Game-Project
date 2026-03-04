@@ -1,0 +1,71 @@
+{
+    "alchemist_a": {
+        "name": "Alchemist A",
+        "level": 1,
+        "hp": 60,
+        "atk": 8,
+        "spriteKey": "daniel_big",
+        "location": "Park Entrance / Open Field",
+        "personality": "Cocky, delusional, thinks he's a mystical genius",
+        "preFightTaunt": "You can't touch me — I've mastered the arcane.",
+        "moves": ["potion_splash", "smoke_bomb", "alchemists_folly"],
+        "xpReward": 120,
+        "nodeId": "alchemist_a"
+    },
+    "junky_j": {
+        "name": "Junky J",
+        "level": 2,
+        "hp": 90,
+        "atk": 14,
+        "spriteKey": "dawson_big",
+        "location": "Back Alley / Park Benches",
+        "personality": "Sneaky, dirty fighter, never plays by the rules",
+        "preFightTaunt": "I don't fight fair, never did.",
+        "moves": ["sucker_punch", "lowball", "js_scheme"],
+        "xpReward": 200,
+        "nodeId": "junky_j"
+    },
+    "dopey_d": {
+        "name": "Dopey D",
+        "level": 3,
+        "hp": 130,
+        "atk": 22,
+        "spriteKey": "josh_big",
+        "location": "Basketball Court",
+        "personality": "Silent. Intimidating. Says nothing. Hits everything.",
+        "preFightTaunt": "... (cracks knuckles)",
+        "moves": ["dopey_smash", "groundshake", "iron_will"],
+        "xpReward": 350,
+        "nodeId": "dopey_d"
+    },
+    "tweaker_t": {
+        "name": "Tweaker T",
+        "level": 4,
+        "hp": 200,
+        "atk": 25,
+        "phase2Hp": 80,
+        "phase2Atk": 38,
+        "spriteKey": "tim_big",
+        "location": "Center of the Park / Main Grounds",
+        "personality": "Completely unhinged, erratic, unpredictable",
+        "preFightTaunt": "You have NO idea what I'm capable of.",
+        "phase2Taunt": "You think that hurt?! I'm just getting started!",
+        "moves": ["tweaker_twitch", "random_rage", "paranoia_strike"],
+        "phase2Moves": ["full_send", "tweaker_tornado", "park_takeover"],
+        "xpReward": 500,
+        "nodeId": "tweaker_t",
+        "isBoss": true
+    },
+    "training_dummy": {
+        "name": "Training Dummy",
+        "level": 0,
+        "hp": 40,
+        "atk": 5,
+        "spriteKey": null,
+        "preFightTaunt": "The training dummy stares blankly...",
+        "moves": ["weak_hit"],
+        "xpReward": 30,
+        "nodeId": "training_zone",
+        "isTraining": true
+    }
+}
