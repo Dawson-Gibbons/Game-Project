@@ -37,6 +37,9 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('josh_big', 'Assets/josh_big.png');
         this.load.image('tim_big', 'Assets/tim_big.png');
 
+        // Title screen background
+        this.load.image('bg_entrance', 'Assets/PixelElmwoodEntrance.jpg');
+
         // Pixel battle backgrounds
         this.load.image('bg_sinkhole', 'Assets/PixelSinkhole.png');
         this.load.image('bg_playground', 'Assets/PixelElmwoodPlayground.png');
