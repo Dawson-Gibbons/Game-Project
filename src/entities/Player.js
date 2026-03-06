@@ -8,11 +8,13 @@ export class Player {
             this.xp = saveData.xp;
             this.defeatedVillains = saveData.defeatedVillains || [];
             this.currentNodeId = saveData.currentNodeId || 'start';
+            this.trainingLevel = saveData.trainingLevel || 0;
         } else {
             this.level = 1;
             this.xp = 0;
             this.defeatedVillains = [];
             this.currentNodeId = 'start';
+            this.trainingLevel = 0;
         }
 
         this.maxHp = this.getMaxHp();
@@ -72,8 +74,14 @@ export class Player {
         return PLAYER_MOVES.filter(moveId => {
             const move = movesData[moveId];
             if (!move) return false;
-            if (move.unlockedAfter && !this.isVillainDefeated(move.unlockedAfter)) return false;
-            return true;
+            if (!move.unlockedAfter) return true;
+            // Training-based unlock (e.g. "training_1" means training level >= 1)
+            if (move.unlockedAfter.startsWith('training_')) {
+                const requiredLevel = parseInt(move.unlockedAfter.split('_')[1]);
+                return this.trainingLevel >= requiredLevel;
+            }
+            // Villain-defeat-based unlock
+            return this.isVillainDefeated(move.unlockedAfter);
         });
     }
 
@@ -81,12 +89,27 @@ export class Player {
         return [...TAUNT_MOVES];
     }
 
+    completeTraining() {
+        if (this.trainingLevel < balanceConfig.training.maxLevel) {
+            this.trainingLevel++;
+        }
+    }
+
+    getTrainingLevel() {
+        return this.trainingLevel;
+    }
+
+    isTrainingComplete() {
+        return this.trainingLevel >= balanceConfig.training.maxLevel;
+    }
+
     toSaveData() {
         return {
             level: this.level,
             xp: this.xp,
             defeatedVillains: this.defeatedVillains,
-            currentNodeId: this.currentNodeId
+            currentNodeId: this.currentNodeId,
+            trainingLevel: this.trainingLevel
         };
     }
 }

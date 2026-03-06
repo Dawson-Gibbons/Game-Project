@@ -15,6 +15,7 @@
         "staminaCost": 20,
         "effect": null,
         "description": "Heavy melee strike",
+        "unlockedAfter": "alchemist_a",
         "owner": "player"
     },
     "warriors_wrath": {
@@ -24,6 +25,7 @@
         "staminaCost": 35,
         "effect": null,
         "description": "Channelled energy blast",
+        "unlockedAfter": "junky_j",
         "owner": "player"
     },
     "dead_leg": {
@@ -42,7 +44,7 @@
         "staminaCost": 60,
         "effect": null,
         "description": "Massive finisher move",
-        "unlockedAfter": "alchemist_a",
+        "unlockedAfter": "training_3",
         "owner": "player"
     },
 

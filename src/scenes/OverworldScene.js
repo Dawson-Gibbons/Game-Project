@@ -67,6 +67,7 @@ export class OverworldScene extends Phaser.Scene {
         const isDefeated = nodeData.villainId && this.player.isVillainDefeated(nodeData.villainId);
         const isAccessible = this.isNodeAccessible(nodeData);
         const isCurrent = this.player.currentNodeId === nodeData.id;
+        const isTrainingDone = nodeData.type === NODE_TYPES.TRAINING && this.player.isTrainingComplete();
         const hc = SettingsScene.isHighContrast();
 
         // Node circle
@@ -77,7 +78,7 @@ export class OverworldScene extends Phaser.Scene {
             fillColor = 0xffcc00;
             strokeColor = 0xffffff;
             alpha = 1;
-        } else if (isDefeated) {
+        } else if (isDefeated || isTrainingDone) {
             fillColor = hc ? 0x44aa44 : 0x446644;
             strokeColor = hc ? 0x88ff88 : 0x668866;
             alpha = hc ? 0.9 : 0.7;
@@ -115,7 +116,7 @@ export class OverworldScene extends Phaser.Scene {
         // Icon/symbol inside circle
         let symbol = '';
         if (nodeData.type === NODE_TYPES.START) symbol = '★';
-        else if (nodeData.type === NODE_TYPES.TRAINING) symbol = '⚔';
+        else if (nodeData.type === NODE_TYPES.TRAINING) symbol = isTrainingDone ? '✓' : '⚔';
         else if (isDefeated) symbol = '✓';
         else if (!isAccessible) symbol = '🔒';
         else symbol = '!';
@@ -131,8 +132,13 @@ export class OverworldScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Label below node
-        const labelColor = isAccessible || isDefeated ? '#ffffff' : (hc ? '#aaaaaa' : '#888888');
-        const label = isAccessible || isDefeated ? nodeData.label : '???';
+        const labelColor = isAccessible || isDefeated || isTrainingDone ? '#ffffff' : (hc ? '#aaaaaa' : '#888888');
+        let label = isAccessible || isDefeated || isTrainingDone ? nodeData.label : '???';
+        if (nodeData.type === NODE_TYPES.TRAINING && isAccessible) {
+            const tLvl = this.player.trainingLevel;
+            const tMax = balanceConfig.training.maxLevel;
+            label = isTrainingDone ? 'Training (MAX)' : `Training (${tLvl}/${tMax})`;
+        }
         this.add.text(nodeData.x, nodeData.y + nodeRadius + 8, label, {
             fontFamily: 'monospace',
             fontSize: `${labelSize}px`,
@@ -142,7 +148,7 @@ export class OverworldScene extends Phaser.Scene {
         }).setOrigin(0.5, 0);
 
         // Make accessible villain/training nodes clickable
-        if (isAccessible && !isDefeated && nodeData.type !== NODE_TYPES.START) {
+        if (isAccessible && !isDefeated && !isTrainingDone && nodeData.type !== NODE_TYPES.START) {
             const hitArea = this.add.circle(nodeData.x, nodeData.y, nodeRadius + 6, 0xffffff, 0.001);
             hitArea.setInteractive({ useHandCursor: true });
 
@@ -242,9 +248,20 @@ export class OverworldScene extends Phaser.Scene {
 
         this.movePlayerTo(nodeData, () => {
             if (nodeData.type === NODE_TYPES.TRAINING) {
-                const villain = this.villainsData['training_dummy'];
+                if (this.player.isTrainingComplete()) {
+                    this.scene.launch(SCENES.DIALOG, {
+                        text: 'Training complete! You have nothing left to learn here.'
+                    });
+                    return;
+                }
+
+                const tLevel = this.player.trainingLevel;
+                const maxLevel = balanceConfig.training.maxLevel;
+                const nextConfig = balanceConfig.training.levels[tLevel];
+                const previewText = `Training Level ${tLevel + 1}/${maxLevel} — Dummy HP: ${nextConfig.hp}, ATK: ${nextConfig.atk}. Ready?`;
+
                 this.scene.launch(SCENES.DIALOG, {
-                    text: villain.preFightTaunt,
+                    text: previewText,
                     onComplete: () => {
                         this.scene.start(SCENES.BATTLE, {
                             villainId: 'training_dummy',
@@ -291,9 +308,18 @@ export class OverworldScene extends Phaser.Scene {
             color: hc ? '#dddddd' : '#aaaaaa'
         }).setOrigin(1, 0);
 
+        // Training level
+        const tLvl = this.player.trainingLevel;
+        const tMax = balanceConfig.training.maxLevel;
+        this.add.text(width * 0.38, 6, `Training: ${tLvl}/${tMax}`, {
+            fontFamily: 'monospace',
+            fontSize: `${hudFontSize}px`,
+            color: tLvl >= tMax ? (hc ? '#88ff88' : '#88cc88') : '#aaaaaa'
+        }).setOrigin(0.5, 0);
+
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
-        this.add.text(width / 2, 6, `Villains Defeated: ${defeated}/4`, {
+        this.add.text(width * 0.62, 6, `Villains Defeated: ${defeated}/4`, {
             fontFamily: 'monospace',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#88ff88' : '#88cc88'

@@ -207,9 +207,8 @@ export class BattleScene extends Phaser.Scene {
 
         await this.showMessage(result.message);
 
-        // Check turn end
-        const turnResult = this.battleSystem.endTurn();
-        this.playerStaminaBar.setValue(this.battleSystem.playerStamina);
+        // Check battle state after player move (no stamina regen)
+        const turnResult = this.battleSystem.checkBattleState();
 
         if (turnResult.phaseTransition) {
             await this.handlePhaseTransition();
@@ -260,8 +259,8 @@ export class BattleScene extends Phaser.Scene {
 
         await this.showMessage(result.message);
 
-        // Check turn end
-        const turnResult = this.battleSystem.endTurn();
+        // End round: regen stamina, tick effects, check battle state
+        const turnResult = this.battleSystem.endRound();
         this.playerStaminaBar.setValue(this.battleSystem.playerStamina);
 
         if (turnResult.phaseTransition) {
@@ -320,7 +319,32 @@ export class BattleScene extends Phaser.Scene {
 
             await this.showMessage(`${this.villainData.name} was defeated!`, 1500);
 
-            if (!this.isTraining) {
+            if (this.isTraining) {
+                // Training completion rewards
+                if (!this.player.isTrainingComplete()) {
+                    const unlockMove = this.battleSystem.getTrainingUnlockMove();
+                    this.player.completeTraining();
+
+                    // Award training XP
+                    const xp = this.battleSystem.getXpReward();
+                    if (xp > 0) {
+                        const leveled = this.player.addXp(xp);
+                        await this.showMessage(`Training complete! Gained ${xp} XP!`, 1200);
+                        if (leveled) {
+                            await this.showMessage(`LEVEL UP! Now level ${this.player.level}!`, 1500);
+                        }
+                    }
+
+                    // Show move unlock if applicable
+                    if (unlockMove) {
+                        const movesData = this.game.registry.get('moves');
+                        const moveName = movesData[unlockMove]?.name || unlockMove;
+                        await this.showMessage(`NEW MOVE UNLOCKED: ${moveName}!`, 2000);
+                    }
+
+                    await this.showMessage(`Training Level: ${this.player.trainingLevel}/${5}`, 1200);
+                }
+            } else {
                 // Award XP
                 const xp = this.battleSystem.getXpReward();
                 const leveled = this.player.addXp(xp);
@@ -332,6 +356,14 @@ export class BattleScene extends Phaser.Scene {
 
                 // Mark villain as defeated
                 this.player.defeatVillain(this.villainId);
+
+                // Check if defeating this villain unlocked a move
+                const movesData = this.game.registry.get('moves');
+                for (const [moveId, move] of Object.entries(movesData)) {
+                    if (move.unlockedAfter === this.villainId) {
+                        await this.showMessage(`NEW MOVE UNLOCKED: ${move.name}!`, 2000);
+                    }
+                }
             }
 
             // Full heal
