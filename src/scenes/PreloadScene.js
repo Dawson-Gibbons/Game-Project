@@ -33,7 +33,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('austin_big', 'Assets/austin_big.png');
         this.load.image('daniel_big', 'Assets/daniel_big.png');
         this.load.image('dawson_big', 'Assets/dawson_big.png');
-        this.load.image('dawson_small', 'Assets/dawson_small.jpeg');
+        this.load.image('dawson_small', 'Assets/dawson_small.png');
         this.load.image('josh_big', 'Assets/josh_big.png');
         this.load.image('tim_big', 'Assets/tim_big.png');
 
