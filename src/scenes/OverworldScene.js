@@ -37,6 +37,9 @@ export class OverworldScene extends Phaser.Scene {
         // HUD
         this.createHUD(width, height);
 
+        // Token Shop (bottom-right, always visible)
+        this.createTokenShop(width, height);
+
         // Music
         this.music = this.sound.add('music_path', { loop: true, volume: 0.5 });
         this.music.play();
@@ -67,7 +70,7 @@ export class OverworldScene extends Phaser.Scene {
         const isDefeated = nodeData.villainId && this.player.isVillainDefeated(nodeData.villainId);
         const isAccessible = this.isNodeAccessible(nodeData);
         const isCurrent = this.player.currentNodeId === nodeData.id;
-        const isTrainingDone = nodeData.type === NODE_TYPES.TRAINING && this.player.isTrainingComplete();
+        const isTrainingDone = false; // Training dummy is always re-fightable
         const hc = SettingsScene.isHighContrast();
 
         // Node circle
@@ -116,7 +119,7 @@ export class OverworldScene extends Phaser.Scene {
         // Icon/symbol inside circle
         let symbol = '';
         if (nodeData.type === NODE_TYPES.START) symbol = '★';
-        else if (nodeData.type === NODE_TYPES.TRAINING) symbol = isTrainingDone ? '✓' : '⚔';
+        else if (nodeData.type === NODE_TYPES.TRAINING) symbol = '⚔';
         else if (isDefeated) symbol = '✓';
         else if (!isAccessible) symbol = '🔒';
         else symbol = '!';
@@ -134,11 +137,6 @@ export class OverworldScene extends Phaser.Scene {
         // Label below node
         const labelColor = isAccessible || isDefeated || isTrainingDone ? '#ffffff' : (hc ? '#aaaaaa' : '#888888');
         let label = isAccessible || isDefeated || isTrainingDone ? nodeData.label : '???';
-        if (nodeData.type === NODE_TYPES.TRAINING && isAccessible) {
-            const tLvl = this.player.trainingLevel;
-            const tMax = balanceConfig.training.maxLevel;
-            label = isTrainingDone ? 'Training (MAX)' : `Training (${tLvl}/${tMax})`;
-        }
         this.add.text(nodeData.x, nodeData.y + nodeRadius + 8, label, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${labelSize}px`,
@@ -180,7 +178,7 @@ export class OverworldScene extends Phaser.Scene {
         const currentNode = this.nodesData.nodes.find(n => n.id === this.player.currentNodeId);
         if (!currentNode) return;
 
-        this.playerSprite = this.add.image(currentNode.x, currentNode.y - 28, 'dawson_small');
+        this.playerSprite = this.add.image(currentNode.x, currentNode.y - 28, this.player.getPlayerSpriteKey().small);
         const scale = Math.min(48 / this.playerSprite.width, 48 / this.playerSprite.height);
         this.playerSprite.setScale(scale);
         this.playerSprite.setDepth(10);
@@ -248,20 +246,8 @@ export class OverworldScene extends Phaser.Scene {
 
         this.movePlayerTo(nodeData, () => {
             if (nodeData.type === NODE_TYPES.TRAINING) {
-                if (this.player.isTrainingComplete()) {
-                    this.scene.launch(SCENES.DIALOG, {
-                        text: 'Training complete! You have nothing left to learn here.'
-                    });
-                    return;
-                }
-
-                const tLevel = this.player.trainingLevel;
-                const maxLevel = balanceConfig.training.maxLevel;
-                const nextConfig = balanceConfig.training.levels[tLevel];
-                const previewText = `Training Level ${tLevel + 1}/${maxLevel} — Dummy HP: ${nextConfig.hp}, ATK: ${nextConfig.atk}. Ready?`;
-
                 this.scene.launch(SCENES.DIALOG, {
-                    text: previewText,
+                    text: 'Fight the training dummy?',
                     onComplete: () => {
                         this.scene.start(SCENES.BATTLE, {
                             villainId: 'training_dummy',
@@ -284,6 +270,91 @@ export class OverworldScene extends Phaser.Scene {
         });
     }
 
+    createTokenShop(width, height) {
+        const hc = SettingsScene.isHighContrast();
+        const scale = SettingsScene.getTextScale();
+        const fontSize = Math.round(7 * scale);
+        const lineHeight = Math.round(14 * scale);
+
+        const shopWidth = Math.round(160 * scale);
+        const shopX = width - shopWidth - 6;
+        const shopBottomMargin = 42; // above bottom bar
+        const shopItems = this.getShopItems();
+        const shopHeight = 20 + shopItems.length * lineHeight + 8;
+        const shopY = height - shopBottomMargin - shopHeight;
+
+        // Shop background
+        this.shopContainer = this.add.container(0, 0).setDepth(50);
+
+        const bg = this.add.rectangle(
+            shopX + shopWidth / 2, shopY + shopHeight / 2,
+            shopWidth, shopHeight, 0x111111, hc ? 0.95 : 0.85
+        );
+        bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
+        this.shopContainer.add(bg);
+
+        // Title with token count
+        const title = this.add.text(shopX + 6, shopY + 4, `Shop [${this.player.tokens}T]`, {
+            fontFamily: '"Press Start 2P"',
+            fontSize: `${fontSize}px`,
+            color: '#ffcc00'
+        });
+        this.shopContainer.add(title);
+
+        // Shop items
+        shopItems.forEach((item, i) => {
+            const yPos = shopY + 18 + i * lineHeight;
+            const canAfford = this.player.tokens >= item.cost;
+            const color = canAfford ? '#ffffff' : (hc ? '#666666' : '#555555');
+
+            const label = this.add.text(shopX + 6, yPos, `${item.label} [${item.cost}T]`, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: `${Math.round(6 * scale)}px`,
+                color: color
+            }).setInteractive({ useHandCursor: canAfford });
+
+            if (canAfford) {
+                label.on('pointerover', () => label.setColor('#ff6600'));
+                label.on('pointerout', () => label.setColor('#ffffff'));
+                label.on('pointerdown', () => {
+                    const success = item.action();
+                    if (success) {
+                        SaveSystem.save(this.player.toSaveData());
+                        this.scene.restart();
+                    }
+                });
+            }
+
+            this.shopContainer.add(label);
+        });
+    }
+
+    getShopItems() {
+        const items = [
+            { label: '+5% Damage', cost: balanceConfig.tokens.upgradeCosts.damageBoost, action: () => this.player.buyDamageBoost() },
+            { label: '+5 Health', cost: balanceConfig.tokens.upgradeCosts.healthBoost, action: () => this.player.buyHealthBoost() },
+            { label: '+5 Stamina', cost: balanceConfig.tokens.upgradeCosts.staminaBoost, action: () => this.player.buyStaminaBoost() }
+        ];
+
+        if (this.player.hasMovesToUnlock()) {
+            items.push({
+                label: 'Unlock Move',
+                cost: balanceConfig.tokens.upgradeCosts.unlockMove,
+                action: () => this.player.buyMoveUnlock()
+            });
+        }
+
+        if (this.player.canRebirth()) {
+            items.push({
+                label: 'Rebirth',
+                cost: balanceConfig.tokens.upgradeCosts.rebirth,
+                action: () => this.player.performRebirth()
+            });
+        }
+
+        return items;
+    }
+
     createHUD(width, height) {
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
@@ -293,29 +364,18 @@ export class OverworldScene extends Phaser.Scene {
         this.add.rectangle(width / 2, 18, width, 36, 0x000000, hc ? 0.9 : 0.7);
 
         // Player info
-        this.add.text(8, 8, `Warrior Lv.${this.player.level}`, {
+        this.add.text(8, 8, 'Elmwood Warrior', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffcc00'
         });
 
-        // XP display
-        const nextLevelXp = this.getNextLevelXp();
-        const xpText = nextLevelXp ? `XP:${this.player.xp}/${nextLevelXp}` : `XP:MAX`;
-        this.add.text(width - 8, 8, xpText, {
+        // Token display
+        this.add.text(width - 8, 8, `Tokens:${this.player.tokens}`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#dddddd' : '#aaaaaa'
         }).setOrigin(1, 0);
-
-        // Training level
-        const tLvl = this.player.trainingLevel;
-        const tMax = balanceConfig.training.maxLevel;
-        this.add.text(width * 0.37, 8, `Train:${tLvl}/${tMax}`, {
-            fontFamily: '"Press Start 2P"',
-            fontSize: `${hudFontSize}px`,
-            color: tLvl >= tMax ? (hc ? '#88ff88' : '#88cc88') : '#aaaaaa'
-        }).setOrigin(0.5, 0);
 
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
@@ -351,8 +411,4 @@ export class OverworldScene extends Phaser.Scene {
         });
     }
 
-    getNextLevelXp() {
-        const thresholds = balanceConfig.xpThresholds;
-        return this.player.level < thresholds.length ? thresholds[this.player.level] : null;
-    }
 }

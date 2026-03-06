@@ -1,15 +1,9 @@
 export const balanceConfig = {
     player: {
-        baseHp: 100,
-        baseStamina: 100,
+        baseHp: 50,
+        baseStamina: 50,
         baseAtk: 10,
         staminaRegenPerTurn: 10
-    },
-    xpThresholds: [0, 100, 250, 500, 900, 1500],
-    levelUpBonuses: {
-        hp: 15,
-        atk: 2,
-        stamina: 5
     },
     itemsPerFight: {
         ghetto_potion: 3
@@ -17,11 +11,31 @@ export const balanceConfig = {
     training: {
         maxLevel: 5,
         levels: [
-            { hp: 65,  atk: 8,  xpReward: 40,  unlockMove: null },
-            { hp: 100, atk: 13, xpReward: 50,  unlockMove: null },
-            { hp: 140, atk: 18, xpReward: 60,  unlockMove: 'finishing_fury' },
-            { hp: 180, atk: 24, xpReward: 70,  unlockMove: null },
-            { hp: 230, atk: 30, xpReward: 80,  unlockMove: null }
+            { hp: 65,  atk: 8 },
+            { hp: 100, atk: 13 },
+            { hp: 140, atk: 18 },
+            { hp: 180, atk: 24 },
+            { hp: 230, atk: 30 }
         ]
+    },
+    tokens: {
+        dummyReward: 1,
+        bossRewards: {
+            alchemist_a: 3,
+            junky_j: 4,
+            dopey_d: 5,
+            tweaker_t: 50
+        },
+        upgradeCosts: {
+            damageBoost: 1,
+            healthBoost: 1,
+            staminaBoost: 1,
+            unlockMove: 5,
+            rebirth: 50
+        },
+        damageBoostPercent: 0.05,
+        healthBoostAmount: 5,
+        staminaBoostAmount: 5,
+        maxRebirths: 2
     }
 };

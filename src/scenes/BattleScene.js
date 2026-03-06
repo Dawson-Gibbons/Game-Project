@@ -1,4 +1,4 @@
-import { SCENES, PLAYER_MOVES, TAUNT_MOVES } from '../utils/constants.js';
+import { SCENES } from '../utils/constants.js';
 import { BattleSystem } from '../systems/BattleSystem.js';
 import { HealthBar } from '../ui/HealthBar.js';
 import { StaminaBar } from '../ui/StaminaBar.js';
@@ -80,7 +80,7 @@ export class BattleScene extends Phaser.Scene {
 
 
         // Player sprite (lower left)
-        this.playerSprite = this.add.image(width * 0.22, height * 0.45, 'dawson_big');
+        this.playerSprite = this.add.image(width * 0.22, height * 0.45, this.player.getPlayerSpriteKey().big);
         this.scaleToFit(this.playerSprite, 180, 180);
 
     }
@@ -320,49 +320,17 @@ export class BattleScene extends Phaser.Scene {
             await this.showMessage(`${this.villainData.name} was defeated!`, 1500);
 
             if (this.isTraining) {
-                // Training completion rewards
-                if (!this.player.isTrainingComplete()) {
-                    const unlockMove = this.battleSystem.getTrainingUnlockMove();
-                    this.player.completeTraining();
-
-                    // Award training XP
-                    const xp = this.battleSystem.getXpReward();
-                    if (xp > 0) {
-                        const leveled = this.player.addXp(xp);
-                        await this.showMessage(`Training complete! Gained ${xp} XP!`, 1200);
-                        if (leveled) {
-                            await this.showMessage(`LEVEL UP! Now level ${this.player.level}!`, 1500);
-                        }
-                    }
-
-                    // Show move unlock if applicable
-                    if (unlockMove) {
-                        const movesData = this.game.registry.get('moves');
-                        const moveName = movesData[unlockMove]?.name || unlockMove;
-                        await this.showMessage(`NEW MOVE UNLOCKED: ${moveName}!`, 2000);
-                    }
-
-                    await this.showMessage(`Training Level: ${this.player.trainingLevel}/${5}`, 1200);
-                }
+                // Award dummy tokens
+                const tokensEarned = this.player.claimDummyTokens();
+                await this.showMessage(`Earned ${tokensEarned} token${tokensEarned !== 1 ? 's' : ''}!`, 1200);
             } else {
-                // Award XP
-                const xp = this.battleSystem.getXpReward();
-                const leveled = this.player.addXp(xp);
-                await this.showMessage(`Gained ${xp} XP!`, 1200);
-
-                if (leveled) {
-                    await this.showMessage(`LEVEL UP! Now level ${this.player.level}!`, 1500);
-                }
-
                 // Mark villain as defeated
                 this.player.defeatVillain(this.villainId);
 
-                // Check if defeating this villain unlocked a move
-                const movesData = this.game.registry.get('moves');
-                for (const [moveId, move] of Object.entries(movesData)) {
-                    if (move.unlockedAfter === this.villainId) {
-                        await this.showMessage(`NEW MOVE UNLOCKED: ${move.name}!`, 2000);
-                    }
+                // Award boss tokens (first kill only)
+                const tokensEarned = this.player.claimBossTokens(this.villainId);
+                if (tokensEarned > 0) {
+                    await this.showMessage(`Earned ${tokensEarned} tokens!`, 1200);
                 }
             }
 

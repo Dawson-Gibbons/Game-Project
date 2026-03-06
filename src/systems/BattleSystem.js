@@ -12,24 +12,12 @@ export class BattleSystem {
         this.playerStamina = player.stamina;
         this.playerMaxStamina = player.maxStamina;
         this.playerAtk = player.atk;
+        this.playerDamageMultiplier = player.getDamageMultiplier();
 
-        // For training, scale dummy stats based on player's training level
-        if (isTraining && player.trainingLevel < balanceConfig.training.maxLevel) {
-            const trainingConfig = balanceConfig.training.levels[player.trainingLevel];
-            this.villainData = { ...villainData, hp: trainingConfig.hp, atk: trainingConfig.atk };
-            this.villainHp = trainingConfig.hp;
-            this.villainMaxHp = trainingConfig.hp;
-            this.villainAtk = trainingConfig.atk;
-            this.trainingXpReward = trainingConfig.xpReward;
-            this.trainingUnlockMove = trainingConfig.unlockMove;
-        } else {
-            this.villainData = villainData;
-            this.villainHp = villainData.hp;
-            this.villainMaxHp = villainData.hp;
-            this.villainAtk = villainData.atk;
-            this.trainingXpReward = 0;
-            this.trainingUnlockMove = null;
-        }
+        this.villainData = villainData;
+        this.villainHp = villainData.hp;
+        this.villainMaxHp = villainData.hp;
+        this.villainAtk = villainData.atk;
 
         // Villain state
         this.villainMoves = [...(this.villainData.moves || villainData.moves)];
@@ -103,9 +91,14 @@ export class BattleSystem {
             };
         }
 
-        // Calculate damage
-        const atkMod = this.getEffectivePlayerAtk() / 10;
-        const damage = Math.floor(move.baseDamage * atkMod);
+        // Training dummy: true base damage; normal fights: scale with atk and boosts
+        let damage;
+        if (this.isTraining) {
+            damage = move.baseDamage;
+        } else {
+            const atkMod = this.getEffectivePlayerAtk() / 10;
+            damage = Math.floor(move.baseDamage * atkMod * this.playerDamageMultiplier);
+        }
         this.villainHp = Math.max(0, this.villainHp - damage);
 
         return {
@@ -162,8 +155,8 @@ export class BattleSystem {
 
         const effect = move.effect;
 
-        // Handle self-heal
-        if (effect && effect.type === 'self_heal') {
+        // Handle self-heal (training dummy cannot heal)
+        if (effect && effect.type === 'self_heal' && !this.isTraining) {
             const healAmount = Math.min(effect.amount, this.villainMaxHp - this.villainHp);
             this.villainHp += healAmount;
             return {
@@ -292,17 +285,6 @@ export class BattleSystem {
         });
 
         return this.checkBattleState();
-    }
-
-    getXpReward() {
-        if (this.isTraining) {
-            return this.trainingXpReward || 0;
-        }
-        return this.villainData.xpReward || 0;
-    }
-
-    getTrainingUnlockMove() {
-        return this.trainingUnlockMove;
     }
 
     getItemQuantities() {

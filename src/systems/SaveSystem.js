@@ -1,6 +1,6 @@
 import { SAVE_KEY } from '../utils/constants.js';
 
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 
 export class SaveSystem {
     static save(playerData) {

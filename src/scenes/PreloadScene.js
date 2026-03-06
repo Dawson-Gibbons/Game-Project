@@ -34,6 +34,10 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('daniel_big', 'Assets/daniel_big.png');
         this.load.image('dawson_big', 'Assets/dawson_big.png');
         this.load.image('dawson_small', 'Assets/dawson_small.png');
+        this.load.image('mary_big', 'Assets/mary_big.png');
+        this.load.image('mary_small', 'Assets/mary_small.png');
+        this.load.image('ryland_big', 'Assets/ryland_big.png');
+        this.load.image('ryland_small', 'Assets/ryland_small.png');
         this.load.image('josh_big', 'Assets/josh_big.png');
         this.load.image('tim_big', 'Assets/tim_big.png');
 
