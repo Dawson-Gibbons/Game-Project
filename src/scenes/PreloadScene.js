@@ -27,14 +27,21 @@ export class PreloadScene extends Phaser.Scene {
         });
 
         // Park map
-        this.load.image('park_map', 'Assets/ElmwoodPark.png');
+        this.load.image('park_map', 'Assets/ElmwoodPark_web.png');
 
         // Character photos
         this.load.image('austin_big', 'Assets/austin_big.jpeg');
         this.load.image('daniel_big', 'Assets/daniel_big.jpeg');
         this.load.image('dawson_big', 'Assets/dawson_big.jpeg');
+        this.load.image('dawson_small', 'Assets/dawson_small.jpeg');
         this.load.image('josh_big', 'Assets/josh_big.jpeg');
         this.load.image('tim_big', 'Assets/tim_big.jpeg');
+
+        // Pixel battle backgrounds
+        this.load.image('bg_sinkhole', 'Assets/PixelSinkhole.png');
+        this.load.image('bg_playground', 'Assets/PixelElmwoodPlayground.png');
+        this.load.image('bg_splashpark', 'Assets/PixelSplashPark.png');
+        this.load.image('bg_4waystop', 'Assets/Pixel4WayStop.png');
 
         // Data files
         this.load.json('villains_data', 'Assets/data/villains.json');

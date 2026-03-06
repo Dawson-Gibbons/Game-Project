@@ -32,7 +32,12 @@ export class BattleScene extends Phaser.Scene {
         );
 
         // Background
-        this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
+        if (this.villainData.backgroundKey) {
+            const bg = this.add.image(width / 2, height / 2, this.villainData.backgroundKey);
+            bg.setDisplaySize(width, height);
+        } else {
+            this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
+        }
         // Ground line
         this.add.rectangle(width / 2, height * 0.55, width, 2, 0x333355);
 
@@ -72,7 +77,7 @@ export class BattleScene extends Phaser.Scene {
             .setStrokeStyle(2, 0xff4444).setFillStyle();
 
         // Player sprite (lower left)
-        this.playerSprite = this.add.image(width * 0.22, height * 0.45, 'austin_big');
+        this.playerSprite = this.add.image(width * 0.22, height * 0.45, 'dawson_big');
         this.scaleToFit(this.playerSprite, 120, 120);
 
         const pb = this.playerSprite.getBounds();

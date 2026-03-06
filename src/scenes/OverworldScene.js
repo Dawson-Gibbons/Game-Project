@@ -29,6 +29,9 @@ export class OverworldScene extends Phaser.Scene {
             this.createNode(node);
         });
 
+        // Player sprite on map
+        this.createPlayerSprite();
+
         // HUD
         this.createHUD(width, height);
 
@@ -152,6 +155,56 @@ export class OverworldScene extends Phaser.Scene {
         this.nodeObjects.push({ nodeData, graphics });
     }
 
+    createPlayerSprite() {
+        const currentNode = this.nodesData.nodes.find(n => n.id === this.player.currentNodeId);
+        if (!currentNode) return;
+
+        this.playerSprite = this.add.image(currentNode.x, currentNode.y - 28, 'dawson_small');
+        const scale = Math.min(32 / this.playerSprite.width, 32 / this.playerSprite.height);
+        this.playerSprite.setScale(scale);
+        this.playerSprite.setDepth(10);
+
+        // Gentle bobbing animation
+        this.tweens.add({
+            targets: this.playerSprite,
+            y: currentNode.y - 32,
+            duration: 800,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    movePlayerTo(nodeData, onComplete) {
+        if (!this.playerSprite) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        // Stop bobbing during move
+        this.tweens.killTweensOf(this.playerSprite);
+
+        this.tweens.add({
+            targets: this.playerSprite,
+            x: nodeData.x,
+            y: nodeData.y - 28,
+            duration: 400,
+            ease: 'Power2',
+            onComplete: () => {
+                // Restart bobbing at new position
+                this.tweens.add({
+                    targets: this.playerSprite,
+                    y: nodeData.y - 32,
+                    duration: 800,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut'
+                });
+                if (onComplete) onComplete();
+            }
+        });
+    }
+
     getNodeColor(nodeData) {
         switch (nodeData.type) {
             case NODE_TYPES.TRAINING: return 0x4488cc;
@@ -170,29 +223,31 @@ export class OverworldScene extends Phaser.Scene {
     handleNodeClick(nodeData) {
         this.player.currentNodeId = nodeData.id;
 
-        if (nodeData.type === NODE_TYPES.TRAINING) {
-            const villain = this.villainsData['training_dummy'];
-            this.scene.launch(SCENES.DIALOG, {
-                text: villain.preFightTaunt,
-                onComplete: () => {
-                    this.scene.start(SCENES.BATTLE, {
-                        villainId: 'training_dummy',
-                        isTraining: true
-                    });
-                }
-            });
-        } else if (nodeData.type === NODE_TYPES.VILLAIN && nodeData.villainId) {
-            const villain = this.villainsData[nodeData.villainId];
-            this.scene.launch(SCENES.DIALOG, {
-                text: `${villain.name}: "${villain.preFightTaunt}"`,
-                onComplete: () => {
-                    this.scene.start(SCENES.BATTLE, {
-                        villainId: nodeData.villainId,
-                        isTraining: false
-                    });
-                }
-            });
-        }
+        this.movePlayerTo(nodeData, () => {
+            if (nodeData.type === NODE_TYPES.TRAINING) {
+                const villain = this.villainsData['training_dummy'];
+                this.scene.launch(SCENES.DIALOG, {
+                    text: villain.preFightTaunt,
+                    onComplete: () => {
+                        this.scene.start(SCENES.BATTLE, {
+                            villainId: 'training_dummy',
+                            isTraining: true
+                        });
+                    }
+                });
+            } else if (nodeData.type === NODE_TYPES.VILLAIN && nodeData.villainId) {
+                const villain = this.villainsData[nodeData.villainId];
+                this.scene.launch(SCENES.DIALOG, {
+                    text: `${villain.name}: "${villain.preFightTaunt}"`,
+                    onComplete: () => {
+                        this.scene.start(SCENES.BATTLE, {
+                            villainId: nodeData.villainId,
+                            isTraining: false
+                        });
+                    }
+                });
+            }
+        });
     }
 
     createHUD(width, height) {
