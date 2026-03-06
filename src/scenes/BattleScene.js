@@ -133,7 +133,7 @@ export class BattleScene extends Phaser.Scene {
 
         this.battleMenu.showMainMenu((action) => {
             this.handleMenuAction(action);
-        }, this.isTraining);
+        }, true);
     }
 
     handleMenuAction(action) {
@@ -277,11 +277,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handleRun() {
-        if (this.isTraining) {
-            this.battleMenu.clear();
-            this.textBox.setVisible(false);
-            this.scene.start(SCENES.OVERWORLD);
-        }
+        this.battleMenu.clear();
+        this.textBox.setVisible(false);
+        if (this.music) this.music.stop();
+        this.scene.start(SCENES.OVERWORLD);
     }
 
     async handlePhaseTransition() {
