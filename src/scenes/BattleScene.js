@@ -1,10 +1,11 @@
-import { SCENES, PLAYER_MOVES, TAUNT_MOVES } from '../utils/constants.js';
+import { SCENES } from '../utils/constants.js';
 import { BattleSystem } from '../systems/BattleSystem.js';
 import { HealthBar } from '../ui/HealthBar.js';
 import { StaminaBar } from '../ui/StaminaBar.js';
 import { BattleMenu } from '../ui/BattleMenu.js';
 import { TextBox } from '../ui/TextBox.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
+import { SettingsScene } from './SettingsScene.js';
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -32,7 +33,12 @@ export class BattleScene extends Phaser.Scene {
         );
 
         // Background
-        this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
+        if (this.villainData.backgroundKey) {
+            const bg = this.add.image(width / 2, height / 2, this.villainData.backgroundKey);
+            bg.setDisplaySize(width, height);
+        } else {
+            this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
+        }
         // Ground line
         this.add.rectangle(width / 2, height * 0.55, width, 2, 0x333355);
 
@@ -42,6 +48,12 @@ export class BattleScene extends Phaser.Scene {
 
         this.setupSprites(width, height);
         this.setupUI(width, height);
+
+        // Music
+        const musicKey = this.isTraining ? 'music_training' : `music_${this.villainId}`;
+        this.music = this.sound.add(musicKey, { loop: true, volume: 0.5 });
+        this.music.play({ seek: 5 });
+        this.events.on('shutdown', () => this.music.stop());
 
         // Start battle
         const introMsg = this.isTraining
@@ -56,28 +68,21 @@ export class BattleScene extends Phaser.Scene {
     setupSprites(width, height) {
         // Villain sprite (upper right)
         if (this.villainData.spriteKey) {
-            this.villainSprite = this.add.image(width * 0.72, height * 0.28, this.villainData.spriteKey);
-            this.scaleToFit(this.villainSprite, 130, 130);
+            this.villainSprite = this.add.image(width * 0.72, height * 0.38, this.villainData.spriteKey);
+            this.scaleToFit(this.villainSprite, 195, 195);
         } else {
             // Training dummy placeholder
-            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.28, 100, 120, 0x886644);
-            const dummyLabel = this.add.text(width * 0.72, height * 0.28, '?', {
+            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.38, 100, 120, 0x886644);
+            const dummyLabel = this.add.text(width * 0.72, height * 0.38, '?', {
                 fontFamily: 'monospace', fontSize: '48px', color: '#ffffff'
             }).setOrigin(0.5);
         }
 
-        // Villain border
-        const vb = this.villainSprite.getBounds();
-        this.add.rectangle(vb.centerX, vb.centerY, vb.width + 6, vb.height + 6)
-            .setStrokeStyle(2, 0xff4444).setFillStyle();
 
         // Player sprite (lower left)
-        this.playerSprite = this.add.image(width * 0.22, height * 0.45, 'austin_big');
-        this.scaleToFit(this.playerSprite, 120, 120);
+        this.playerSprite = this.add.image(width * 0.22, height * 0.45, this.player.getPlayerSpriteKey().big);
+        this.scaleToFit(this.playerSprite, 180, 180);
 
-        const pb = this.playerSprite.getBounds();
-        this.add.rectangle(pb.centerX, pb.centerY, pb.width + 6, pb.height + 6)
-            .setStrokeStyle(2, 0x4444ff).setFillStyle();
     }
 
     scaleToFit(image, maxW, maxH) {
@@ -88,18 +93,18 @@ export class BattleScene extends Phaser.Scene {
     }
 
     setupUI(width, height) {
-        // Villain HP bar
-        this.villainHpBar = new HealthBar(this, width * 0.52, 30, 200, 14, this.villainData.hp, 0xcc4444);
+        // Villain HP bar — y=44 gives label room above it (label sits at y≈26)
+        this.villainHpBar = new HealthBar(this, width * 0.52, 44, 200, 14, this.villainData.hp, 0xcc4444);
         this.villainHpBar.setLabel(this.villainData.name);
         this.villainHpBar.setValue(this.villainData.hp, this.villainData.hp);
 
-        // Player HP bar
-        this.playerHpBar = new HealthBar(this, 30, height * 0.62, 180, 14, this.player.maxHp, 0x44cc44);
+        // Player HP bar — pushed down to 0.68 so label clears the player sprite (~y262)
+        this.playerHpBar = new HealthBar(this, 30, height * 0.58, 180, 14, this.player.maxHp, 0x44cc44);
         this.playerHpBar.setLabel('Elmwood Warrior');
         this.playerHpBar.setValue(this.player.hp, this.player.maxHp);
 
-        // Player Stamina bar
-        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.62 + 28, 180, 10, this.player.maxStamina);
+        // Player Stamina bar — 26px below HP bar, leaves gap before text box at height-110
+        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.58 + 36, 180, 10, this.player.maxStamina);
         this.playerStaminaBar.setLabel('Stamina');
         this.playerStaminaBar.setValue(this.player.stamina, this.player.maxStamina);
 
@@ -202,9 +207,8 @@ export class BattleScene extends Phaser.Scene {
 
         await this.showMessage(result.message);
 
-        // Check turn end
-        const turnResult = this.battleSystem.endTurn();
-        this.playerStaminaBar.setValue(this.battleSystem.playerStamina);
+        // Check battle state after player move (no stamina regen)
+        const turnResult = this.battleSystem.checkBattleState();
 
         if (turnResult.phaseTransition) {
             await this.handlePhaseTransition();
@@ -255,8 +259,8 @@ export class BattleScene extends Phaser.Scene {
 
         await this.showMessage(result.message);
 
-        // Check turn end
-        const turnResult = this.battleSystem.endTurn();
+        // End round: regen stamina, tick effects, check battle state
+        const turnResult = this.battleSystem.endRound();
         this.playerStaminaBar.setValue(this.battleSystem.playerStamina);
 
         if (turnResult.phaseTransition) {
@@ -281,14 +285,21 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async handlePhaseTransition() {
+        const animSpeed = SettingsScene.getAnimSpeed();
+
         // Red flash
         this.tweens.add({
             targets: this.phaseOverlay,
             alpha: 0.6,
-            duration: 200,
+            duration: Math.round(200 / animSpeed),
             yoyo: true,
             repeat: 2
         });
+
+        // Screen shake (if enabled)
+        if (SettingsScene.isScreenShakeEnabled()) {
+            this.cameras.main.shake(Math.round(600 / animSpeed), 0.02);
+        }
 
         await this.showMessage(this.villainData.phase2Taunt, 2000);
         await this.showMessage('Tweaker T entered RAGE MODE!', 1500);
@@ -296,29 +307,31 @@ export class BattleScene extends Phaser.Scene {
 
     async handleBattleEnd(winner) {
         this.battleMenu.clear();
+        const animSpeed = SettingsScene.getAnimSpeed();
 
         if (winner === 'player') {
             // Fade out villain
             this.tweens.add({
                 targets: this.villainSprite,
                 alpha: 0,
-                duration: 800
+                duration: Math.round(800 / animSpeed)
             });
 
             await this.showMessage(`${this.villainData.name} was defeated!`, 1500);
 
-            if (!this.isTraining) {
-                // Award XP
-                const xp = this.battleSystem.getXpReward();
-                const leveled = this.player.addXp(xp);
-                await this.showMessage(`Gained ${xp} XP!`, 1200);
-
-                if (leveled) {
-                    await this.showMessage(`LEVEL UP! Now level ${this.player.level}!`, 1500);
-                }
-
+            if (this.isTraining) {
+                // Award dummy tokens
+                const tokensEarned = this.player.claimDummyTokens();
+                await this.showMessage(`Earned ${tokensEarned} token${tokensEarned !== 1 ? 's' : ''}!`, 1200);
+            } else {
                 // Mark villain as defeated
                 this.player.defeatVillain(this.villainId);
+
+                // Award boss tokens (first kill only)
+                const tokensEarned = this.player.claimBossTokens(this.villainId);
+                if (tokensEarned > 0) {
+                    await this.showMessage(`Earned ${tokensEarned} tokens!`, 1200);
+                }
             }
 
             // Full heal
@@ -339,7 +352,7 @@ export class BattleScene extends Phaser.Scene {
             this.tweens.add({
                 targets: this.playerSprite,
                 alpha: 0,
-                duration: 800
+                duration: Math.round(800 / animSpeed)
             });
 
             await this.showMessage('You were defeated...', 2000);
@@ -353,7 +366,7 @@ export class BattleScene extends Phaser.Scene {
         // Cover screen
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.8).setDepth(200);
 
-        this.add.text(width / 2, height * 0.3, 'VICTORY!', {
+        this.add.text(width / 2, height * 0.25, 'VICTORY!', {
             fontFamily: 'monospace',
             fontSize: '48px',
             fontStyle: 'bold',
@@ -362,31 +375,50 @@ export class BattleScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5).setDepth(201);
 
-        this.add.text(width / 2, height * 0.5, 'Elmwood Park is safe!', {
+        this.add.text(width / 2, height * 0.42, 'Elmwood Park is safe!', {
             fontFamily: 'monospace',
             fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0.5).setDepth(201);
 
-        const restartBtn = this.add.text(width / 2, height * 0.7, '[ Return to Title ]', {
+        const mapBtn = this.add.text(width / 2, height * 0.58, '[ Return to Map ]', {
             fontFamily: 'monospace',
             fontSize: '18px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
 
-        restartBtn.on('pointerover', () => restartBtn.setColor('#ff6600'));
-        restartBtn.on('pointerout', () => restartBtn.setColor('#ffffff'));
-        restartBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
+        mapBtn.on('pointerover', () => mapBtn.setColor('#ff6600'));
+        mapBtn.on('pointerout', () => mapBtn.setColor('#ffffff'));
+        mapBtn.on('pointerdown', () => {
+            this.player.fullHeal();
+            this.scene.start(SCENES.OVERWORLD);
+        });
+
+        const titleBtn = this.add.text(width / 2, height * 0.72, '[ Return to Title ]', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            color: '#999999'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
+
+        titleBtn.on('pointerover', () => titleBtn.setColor('#ff6600'));
+        titleBtn.on('pointerout', () => titleBtn.setColor('#999999'));
+        titleBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
     }
 
     showDefeatOptions() {
         const { width, height } = this.cameras.main;
 
-        const retryBtn = this.add.text(width * 0.35, height * 0.75, '[ Try Again ]', {
+        // Place buttons in the battle-menu area (right half of bottom panel) so they
+        // don't overlap the TextBox on the left.
+        const centerX = width * 0.74;
+        const panelBg = this.add.rectangle(centerX, height - 55, width * 0.48, 80, 0x111111, 0.9);
+        panelBg.setStrokeStyle(2, 0xff4444);
+
+        const retryBtn = this.add.text(centerX, height - 75, '[ Try Again ]', {
             fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-        const returnBtn = this.add.text(width * 0.65, height * 0.75, '[ Return to Map ]', {
+        const returnBtn = this.add.text(centerX, height - 40, '[ Return to Map ]', {
             fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -406,6 +438,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     animateAttack(attacker, defender) {
+        const animSpeed = SettingsScene.getAnimSpeed();
+
         return new Promise((resolve) => {
             const origX = attacker.x;
             const origY = attacker.y;
@@ -417,13 +451,18 @@ export class BattleScene extends Phaser.Scene {
                 targets: attacker,
                 x: origX + dx,
                 y: origY + dy,
-                duration: 100,
+                duration: Math.round(100 / animSpeed),
                 yoyo: true,
                 onComplete: () => {
+                    // Screen shake on hit
+                    if (SettingsScene.isScreenShakeEnabled()) {
+                        this.cameras.main.shake(Math.round(150 / animSpeed), 0.01);
+                    }
+
                     // Flash defender red
                     if (defender.setTint) {
                         defender.setTint(0xff0000);
-                        this.time.delayedCall(200, () => {
+                        this.time.delayedCall(Math.round(200 / animSpeed), () => {
                             defender.clearTint();
                             resolve();
                         });

@@ -2,7 +2,7 @@
     "park_hands": {
         "name": "Park Hands",
         "type": "physical",
-        "baseDamage": 12,
+        "baseDamage": 15,
         "staminaCost": 10,
         "effect": null,
         "description": "Basic punch/kick combo",
@@ -31,7 +31,11 @@
         "type": "taunt",
         "baseDamage": 0,
         "staminaCost": 15,
-        "effect": { "type": "atk_debuff", "amount": 0.15, "duration": 2 },
+        "effect": {
+            "type": "atk_debuff",
+            "amount": 0.15,
+            "duration": 2
+        },
         "description": "Reduces enemy ATK by 15% for 2 turns",
         "owner": "player"
     },
@@ -42,10 +46,8 @@
         "staminaCost": 60,
         "effect": null,
         "description": "Massive finisher move",
-        "unlockedAfter": "alchemist_a",
         "owner": "player"
     },
-
     "potion_splash": {
         "name": "Potion Splash",
         "baseDamage": 8,
@@ -56,40 +58,54 @@
     "smoke_bomb": {
         "name": "Smoke Bomb",
         "baseDamage": 5,
-        "effect": { "type": "miss_chance", "chance": 0.4, "duration": 1 },
+        "effect": {
+            "type": "miss_chance",
+            "chance": 0.4,
+            "duration": 1
+        },
         "description": "40% chance to make Warrior's next attack miss",
         "owner": "villain"
     },
     "alchemists_folly": {
         "name": "Alchemist's Folly",
         "baseDamage": 18,
-        "effect": { "type": "backfire", "chance": 0.25 },
-        "description": "Moderate magic hit — 25% chance to backfire",
+        "effect": {
+            "type": "backfire",
+            "chance": 0.25
+        },
+        "description": "Moderate magic hit \u00e2\u20ac\u201d 25% chance to backfire",
         "owner": "villain"
     },
-
     "sucker_punch": {
         "name": "Sucker Punch",
         "baseDamage": 15,
-        "effect": { "type": "priority" },
+        "effect": {
+            "type": "priority"
+        },
         "description": "Goes first regardless of turn order",
         "owner": "villain"
     },
     "lowball": {
         "name": "Lowball",
         "baseDamage": 10,
-        "effect": { "type": "multi_hit", "hits": 2 },
+        "effect": {
+            "type": "multi_hit",
+            "hits": 2
+        },
         "description": "Hits twice in one turn",
         "owner": "villain"
     },
     "js_scheme": {
         "name": "J's Scheme",
         "baseDamage": 5,
-        "effect": { "type": "atk_debuff", "amount": 0.20, "duration": 3 },
+        "effect": {
+            "type": "atk_debuff",
+            "amount": 0.2,
+            "duration": 3
+        },
         "description": "Debuffs Warrior's ATK by 20% for 3 turns",
         "owner": "villain"
     },
-
     "dopey_smash": {
         "name": "Dopey Smash",
         "baseDamage": 28,
@@ -100,40 +116,53 @@
     "groundshake": {
         "name": "Groundshake",
         "baseDamage": 18,
-        "effect": { "type": "stun", "duration": 1 },
+        "effect": {
+            "type": "stun",
+            "duration": 1
+        },
         "description": "Stuns Warrior for 1 turn",
         "owner": "villain"
     },
     "iron_will": {
         "name": "Iron Will",
         "baseDamage": 0,
-        "effect": { "type": "self_heal", "amount": 20 },
+        "effect": {
+            "type": "self_heal",
+            "amount": 20
+        },
         "description": "Dopey D heals 20 HP",
         "owner": "villain"
     },
-
     "tweaker_twitch": {
         "name": "Tweaker Twitch",
         "baseDamage": 20,
-        "effect": { "type": "variance", "range": 5 },
-        "description": "Erratic strike, ±5 random damage",
+        "effect": {
+            "type": "variance",
+            "range": 5
+        },
+        "description": "Erratic strike, \u00c2\u00b15 random damage",
         "owner": "villain"
     },
     "random_rage": {
         "name": "Random Rage",
         "baseDamage": 25,
-        "effect": { "type": "miss_chance_self", "chance": 0.2 },
+        "effect": {
+            "type": "miss_chance_self",
+            "chance": 0.2
+        },
         "description": "High damage, 20% chance to miss entirely",
         "owner": "villain"
     },
     "paranoia_strike": {
         "name": "Paranoia Strike",
         "baseDamage": 15,
-        "effect": { "type": "stamina_drain", "amount": 20 },
+        "effect": {
+            "type": "stamina_drain",
+            "amount": 20
+        },
         "description": "Reduces Warrior's stamina by 20",
         "owner": "villain"
     },
-
     "full_send": {
         "name": "Full Send",
         "baseDamage": 35,
@@ -144,18 +173,22 @@
     "tweaker_tornado": {
         "name": "Tweaker Tornado",
         "baseDamage": 12,
-        "effect": { "type": "multi_hit", "hits": 3 },
+        "effect": {
+            "type": "multi_hit",
+            "hits": 3
+        },
         "description": "Hits 3 times in one turn",
         "owner": "villain"
     },
     "park_takeover": {
         "name": "Park Takeover",
         "baseDamage": 45,
-        "effect": { "type": "once_per_fight" },
-        "description": "Ultimate move — used once per fight",
+        "effect": {
+            "type": "once_per_fight"
+        },
+        "description": "Ultimate move \u00e2\u20ac\u201d used once per fight",
         "owner": "villain"
     },
-
     "weak_hit": {
         "name": "Weak Hit",
         "baseDamage": 8,

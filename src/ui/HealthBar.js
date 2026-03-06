@@ -1,3 +1,5 @@
+import { SettingsScene } from '../scenes/SettingsScene.js';
+
 export class HealthBar {
     constructor(scene, x, y, width, height, maxValue, color = 0x44cc44) {
         this.scene = scene;
@@ -9,21 +11,25 @@ export class HealthBar {
         this.currentValue = maxValue;
         this.color = color;
 
+        const hc = SettingsScene.isHighContrast();
+        const scale = SettingsScene.getTextScale();
+        const fontSize = Math.round(8 * scale);
+
         // Background bar
-        this.bg = scene.add.rectangle(x, y, width, height, 0x333333).setOrigin(0, 0.5);
-        this.bg.setStrokeStyle(1, 0x666666);
+        this.bg = scene.add.rectangle(x, y, width, height, hc ? 0x222222 : 0x333333).setOrigin(0, 0.5);
+        this.bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
 
         // Fill bar
         this.fill = scene.add.rectangle(x + 1, y, width - 2, height - 2, color).setOrigin(0, 0.5);
 
         // Label text
         this.label = scene.add.text(x, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: '12px', color: '#ffffff'
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(0, 1);
 
         // Value text
         this.valueText = scene.add.text(x + width, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: '12px', color: '#ffffff'
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(1, 1);
 
         this.updateValueText();
@@ -49,10 +55,11 @@ export class HealthBar {
             barColor = 0xcc2222;
         }
 
+        const animSpeed = SettingsScene.getAnimSpeed();
         this.scene.tweens.add({
             targets: this.fill,
             width: targetWidth,
-            duration: 300,
+            duration: Math.round(300 / animSpeed),
             ease: 'Power2',
             onUpdate: () => {
                 this.fill.fillColor = barColor;

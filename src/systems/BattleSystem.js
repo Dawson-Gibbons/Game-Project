@@ -12,13 +12,15 @@ export class BattleSystem {
         this.playerStamina = player.stamina;
         this.playerMaxStamina = player.maxStamina;
         this.playerAtk = player.atk;
+        this.playerDamageMultiplier = player.getDamageMultiplier();
 
-        // Villain state
         this.villainData = villainData;
         this.villainHp = villainData.hp;
         this.villainMaxHp = villainData.hp;
         this.villainAtk = villainData.atk;
-        this.villainMoves = [...villainData.moves];
+
+        // Villain state
+        this.villainMoves = [...(this.villainData.moves || villainData.moves)];
         this.villainPhase = 1;
 
         // Status effects
@@ -89,9 +91,14 @@ export class BattleSystem {
             };
         }
 
-        // Calculate damage
-        const atkMod = this.getEffectivePlayerAtk() / 10;
-        const damage = Math.floor(move.baseDamage * atkMod);
+        // Training dummy: base damage scaled by boost only (no atk scaling); normal fights: scale with atk and boosts
+        let damage;
+        if (this.isTraining) {
+            damage = Math.round(move.baseDamage * this.playerDamageMultiplier);
+        } else {
+            const atkMod = this.getEffectivePlayerAtk() / 10;
+            damage = Math.round(move.baseDamage * atkMod * this.playerDamageMultiplier);
+        }
         this.villainHp = Math.max(0, this.villainHp - damage);
 
         return {
@@ -148,8 +155,8 @@ export class BattleSystem {
 
         const effect = move.effect;
 
-        // Handle self-heal
-        if (effect && effect.type === 'self_heal') {
+        // Handle self-heal (training dummy cannot heal)
+        if (effect && effect.type === 'self_heal' && !this.isTraining) {
             const healAmount = Math.min(effect.amount, this.villainMaxHp - this.villainHp);
             this.villainHp += healAmount;
             return {
@@ -233,23 +240,7 @@ export class BattleSystem {
         };
     }
 
-    endTurn() {
-        // Regen stamina
-        this.playerStamina = Math.min(
-            this.playerMaxStamina,
-            this.playerStamina + balanceConfig.player.staminaRegenPerTurn
-        );
-
-        // Tick down status effects
-        this.playerEffects = this.playerEffects.filter(e => {
-            e.turnsLeft--;
-            return e.turnsLeft > 0;
-        });
-        this.villainEffects = this.villainEffects.filter(e => {
-            e.turnsLeft--;
-            return e.turnsLeft > 0;
-        });
-
+    checkBattleState() {
         // Check phase transition (Tweaker T)
         let phaseTransition = false;
         if (this.villainData.isBoss && this.villainPhase === 1 && this.villainHp <= this.villainData.phase2Hp) {
@@ -276,8 +267,24 @@ export class BattleSystem {
         };
     }
 
-    getXpReward() {
-        return this.villainData.xpReward || 0;
+    endRound() {
+        // Regen stamina once per full round (after enemy turn)
+        this.playerStamina = Math.min(
+            this.playerMaxStamina,
+            this.playerStamina + balanceConfig.player.staminaRegenPerTurn
+        );
+
+        // Tick down status effects
+        this.playerEffects = this.playerEffects.filter(e => {
+            e.turnsLeft--;
+            return e.turnsLeft > 0;
+        });
+        this.villainEffects = this.villainEffects.filter(e => {
+            e.turnsLeft--;
+            return e.turnsLeft > 0;
+        });
+
+        return this.checkBattleState();
     }
 
     getItemQuantities() {
