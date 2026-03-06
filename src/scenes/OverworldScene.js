@@ -278,7 +278,7 @@ export class OverworldScene extends Phaser.Scene {
 
         const shopWidth = Math.round(160 * scale);
         const shopX = width - shopWidth - 6;
-        const shopBottomMargin = 42; // above bottom bar
+        const shopBottomMargin = 34; // above bottom bar
         const shopItems = this.getShopItems();
         const shopHeight = 20 + shopItems.length * lineHeight + 8;
         const shopY = height - shopBottomMargin - shopHeight;
@@ -286,10 +286,44 @@ export class OverworldScene extends Phaser.Scene {
         // Shop background
         this.shopContainer = this.add.container(0, 0).setDepth(50);
 
-        // Dev mode: +tokens panel above shop
+        // Stat bar above shop
+        const statFontSize = Math.round(6 * scale);
+        const statLineH = Math.round(12 * scale);
+        const statH = statLineH * 3 + 8;
+        const statY = shopY - statH;
+        const dmgPercent = Math.round((this.player.getDamageMultiplier() - 1) * 100);
+
+        const statBg = this.add.rectangle(
+            shopX + shopWidth / 2, statY + statH / 2,
+            shopWidth, statH, 0x111111, hc ? 0.95 : 0.85
+        );
+        statBg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
+        this.shopContainer.add(statBg);
+
+        const statLines = [
+            `DMG Boost: +${dmgPercent}%`,
+            `Health: ${this.player.maxHp}`,
+            `Stamina: ${this.player.maxStamina}`
+        ];
+        statLines.forEach((line, i) => {
+            const text = this.add.text(shopX + 6, statY + 4 + i * statLineH, line, {
+                fontFamily: '"Press Start 2P"',
+                fontSize: `${statFontSize}px`,
+                color: '#aaaaaa'
+            });
+            this.shopContainer.add(text);
+        });
+
+        // Divider line between stat bar and shop
+        const divider = this.add.rectangle(
+            shopX + shopWidth / 2, shopY, shopWidth, 2, 0xaaaaaa, 1
+        );
+        this.shopContainer.add(divider);
+
+        // Dev mode: +tokens panel above stat bar
         if (SettingsScene.isDevMode()) {
             const devH = 30;
-            const devY = shopY - devH - 4;
+            const devY = statY - devH - 4;
             const devBg = this.add.rectangle(
                 shopX + shopWidth / 2, devY + devH / 2,
                 shopWidth, devH, 0x331100, 0.9
@@ -394,17 +428,17 @@ export class OverworldScene extends Phaser.Scene {
         const hudFontSize = Math.round(8 * scale);
 
         // HUD background
-        this.add.rectangle(width / 2, 18, width, 36, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, 14, width, 28, 0x000000, hc ? 0.9 : 0.7);
 
         // Player info
-        this.add.text(8, 8, 'Elmwood Warrior', {
+        this.add.text(8, 5, 'Elmwood Warrior', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffcc00'
         });
 
         // Token display
-        this.add.text(width - 8, 8, `Tokens:${this.player.tokens}`, {
+        this.add.text(width - 8, 5, `Tokens:${this.player.tokens}`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#dddddd' : '#aaaaaa'
@@ -412,16 +446,16 @@ export class OverworldScene extends Phaser.Scene {
 
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
-        this.add.text(width * 0.63, 8, `Defeated:${defeated}/4`, {
+        this.add.text(width * 0.63, 5, `Defeated:${defeated}/4`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#88ff88' : '#88cc88'
         }).setOrigin(0.5, 0);
 
         // Bottom bar with back and settings buttons
-        this.add.rectangle(width / 2, height - 18, width, 36, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, height - 14, width, 28, 0x000000, hc ? 0.9 : 0.7);
 
-        const backBtn = this.add.text(10, height - 18, '< Title', {
+        const backBtn = this.add.text(10, height - 14, '< Title', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'
@@ -431,7 +465,7 @@ export class OverworldScene extends Phaser.Scene {
         backBtn.on('pointerout', () => backBtn.setColor('#ffffff'));
         backBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
 
-        const settingsBtn = this.add.text(width - 10, height - 18, 'Settings >', {
+        const settingsBtn = this.add.text(width - 10, height - 14, 'Settings >', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'
