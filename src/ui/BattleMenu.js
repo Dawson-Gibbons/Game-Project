@@ -80,8 +80,18 @@ export class BattleMenu {
         bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0xff6600);
         this.elements.push(bg);
 
-        const lineHeight = Math.round(28 * scale);
-        const startY = this.y + 14;
+        const lineHeight = Math.round(22 * scale);
+        const startY = this.y + 10;
+
+        // Back button (top-right corner)
+        const backBtn = this.scene.add.text(
+            this.x + this.width - 12, this.y + 10, 'Back →',
+            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
+        ).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+        backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
+        backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
+        backBtn.on('pointerdown', () => onBack());
+        this.elements.push(backBtn);
 
         moves.forEach((moveId, index) => {
             const move = movesData[moveId];
@@ -106,16 +116,6 @@ export class BattleMenu {
 
             this.elements.push(text);
         });
-
-        // Back button
-        const backBtn = this.scene.add.text(
-            this.x + 12, this.y + this.height - 24, '← Back',
-            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
-        ).setInteractive({ useHandCursor: true });
-        backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
-        backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
-        backBtn.on('pointerdown', () => onBack());
-        this.elements.push(backBtn);
     }
 
     showItemSelect(items, itemsData, quantities, onSelect, onBack) {
@@ -133,8 +133,19 @@ export class BattleMenu {
         bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0xff6600);
         this.elements.push(bg);
 
-        const lineHeight = Math.round(28 * scale);
-        const startY = this.y + 14;
+        const lineHeight = Math.round(22 * scale);
+        const startY = this.y + 10;
+
+        // Back button (top-right corner)
+        const backBtn = this.scene.add.text(
+            this.x + this.width - 12, this.y + 10, 'Back →',
+            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
+        ).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+        backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
+        backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
+        backBtn.on('pointerdown', () => onBack());
+        this.elements.push(backBtn);
+
         let index = 0;
 
         for (const [itemId, qty] of Object.entries(quantities)) {
@@ -162,16 +173,6 @@ export class BattleMenu {
             );
             this.elements.push(empty);
         }
-
-        // Back button
-        const backBtn = this.scene.add.text(
-            this.x + 12, this.y + this.height - 24, '← Back',
-            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
-        ).setInteractive({ useHandCursor: true });
-        backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
-        backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
-        backBtn.on('pointerdown', () => onBack());
-        this.elements.push(backBtn);
     }
 
     clear() {
