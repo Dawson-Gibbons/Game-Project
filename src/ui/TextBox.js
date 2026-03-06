@@ -1,3 +1,5 @@
+import { SettingsScene } from '../scenes/SettingsScene.js';
+
 export class TextBox {
     constructor(scene, x, y, width, height) {
         this.scene = scene;
@@ -9,21 +11,25 @@ export class TextBox {
         this.isTyping = false;
         this.timerEvent = null;
 
+        const hc = SettingsScene.isHighContrast();
+        const scale = SettingsScene.getTextScale();
+        const fontSize = Math.round(14 * scale);
+
         // Semi-transparent background
-        this.bg = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, 0.85);
-        this.bg.setStrokeStyle(2, 0x555555);
+        this.bg = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, hc ? 0.95 : 0.85);
+        this.bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0x555555);
 
         // Text content
         this.text = scene.add.text(x + 12, y + 12, '', {
             fontFamily: 'monospace',
-            fontSize: '14px',
+            fontSize: `${fontSize}px`,
             color: '#ffffff',
             wordWrap: { width: width - 24 }
         });
 
         // Click-to-advance indicator
         this.indicator = scene.add.text(x + width - 20, y + height - 18, '▼', {
-            fontFamily: 'monospace', fontSize: '12px', color: '#aaaaaa'
+            fontFamily: 'monospace', fontSize: '12px', color: hc ? '#ffffff' : '#aaaaaa'
         }).setVisible(false);
 
         this.setVisible(false);
@@ -38,11 +44,13 @@ export class TextBox {
 
         let charIndex = 0;
         const chars = fullText.split('');
+        const animSpeed = SettingsScene.getAnimSpeed();
+        const typeDelay = Math.round(30 / animSpeed);
 
         if (this.timerEvent) this.timerEvent.destroy();
 
         this.timerEvent = this.scene.time.addEvent({
-            delay: 30,
+            delay: typeDelay,
             repeat: chars.length - 1,
             callback: () => {
                 this.text.setText(this.text.text + chars[charIndex]);
@@ -73,12 +81,15 @@ export class TextBox {
     }
 
     showBattleMessage(message, duration = 1200) {
+        const animSpeed = SettingsScene.getAnimSpeed();
+        const adjustedDuration = Math.round(duration / animSpeed);
+
         return new Promise((resolve) => {
             this.setVisible(true);
             this.text.setText(message);
             this.indicator.setVisible(false);
 
-            this.scene.time.delayedCall(duration, () => {
+            this.scene.time.delayedCall(adjustedDuration, () => {
                 resolve();
             });
         });

@@ -1,6 +1,7 @@
 import { SCENES, NODE_TYPES } from '../utils/constants.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
 import { balanceConfig } from '../config/balanceConfig.js';
+import { SettingsScene } from './SettingsScene.js';
 
 export class OverworldScene extends Phaser.Scene {
     constructor() {
@@ -18,7 +19,8 @@ export class OverworldScene extends Phaser.Scene {
         map.setDisplaySize(width, height);
 
         // Dark overlay for better node visibility
-        this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.25);
+        const hc = SettingsScene.isHighContrast();
+        this.add.rectangle(width / 2, height / 2, width, height, 0x000000, hc ? 0.5 : 0.25);
 
         // Draw path edges
         this.drawPaths();
@@ -40,8 +42,9 @@ export class OverworldScene extends Phaser.Scene {
     }
 
     drawPaths() {
+        const hc = SettingsScene.isHighContrast();
         const graphics = this.add.graphics();
-        graphics.lineStyle(3, 0xccaa66, 0.6);
+        graphics.lineStyle(hc ? 5 : 3, hc ? 0xffffff : 0xccaa66, hc ? 0.9 : 0.6);
 
         this.nodesData.edges.forEach(([fromId, toId]) => {
             const fromNode = this.nodesData.nodes.find(n => n.id === fromId);
@@ -59,6 +62,7 @@ export class OverworldScene extends Phaser.Scene {
         const isDefeated = nodeData.villainId && this.player.isVillainDefeated(nodeData.villainId);
         const isAccessible = this.isNodeAccessible(nodeData);
         const isCurrent = this.player.currentNodeId === nodeData.id;
+        const hc = SettingsScene.isHighContrast();
 
         // Node circle
         const graphics = this.add.graphics();
@@ -69,24 +73,26 @@ export class OverworldScene extends Phaser.Scene {
             strokeColor = 0xffffff;
             alpha = 1;
         } else if (isDefeated) {
-            fillColor = 0x446644;
-            strokeColor = 0x668866;
-            alpha = 0.7;
+            fillColor = hc ? 0x44aa44 : 0x446644;
+            strokeColor = hc ? 0x88ff88 : 0x668866;
+            alpha = hc ? 0.9 : 0.7;
         } else if (isAccessible) {
             fillColor = this.getNodeColor(nodeData);
             strokeColor = 0xffffff;
             alpha = 1;
         } else {
-            fillColor = 0x444444;
-            strokeColor = 0x555555;
-            alpha = 0.5;
+            fillColor = hc ? 0x555555 : 0x444444;
+            strokeColor = hc ? 0x888888 : 0x555555;
+            alpha = hc ? 0.7 : 0.5;
         }
+
+        const nodeRadius = hc ? 18 : 16;
 
         // Draw filled circle
         graphics.fillStyle(fillColor, alpha);
-        graphics.fillCircle(nodeData.x, nodeData.y, 16);
-        graphics.lineStyle(2, strokeColor, alpha);
-        graphics.strokeCircle(nodeData.x, nodeData.y, 16);
+        graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius);
+        graphics.lineStyle(hc ? 3 : 2, strokeColor, alpha);
+        graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius);
 
         // Pulsing animation for current node
         if (isCurrent) {
@@ -109,42 +115,46 @@ export class OverworldScene extends Phaser.Scene {
         else if (!isAccessible) symbol = '🔒';
         else symbol = '!';
 
+        const scale = SettingsScene.getTextScale();
+        const symbolSize = Math.round(14 * scale);
+        const labelSize = Math.round(11 * scale);
+
         this.add.text(nodeData.x, nodeData.y, symbol, {
             fontFamily: 'monospace',
-            fontSize: '14px',
+            fontSize: `${symbolSize}px`,
             color: '#ffffff'
         }).setOrigin(0.5);
 
         // Label below node
-        const labelColor = isAccessible || isDefeated ? '#ffffff' : '#888888';
+        const labelColor = isAccessible || isDefeated ? '#ffffff' : (hc ? '#aaaaaa' : '#888888');
         const label = isAccessible || isDefeated ? nodeData.label : '???';
-        this.add.text(nodeData.x, nodeData.y + 24, label, {
+        this.add.text(nodeData.x, nodeData.y + nodeRadius + 8, label, {
             fontFamily: 'monospace',
-            fontSize: '11px',
+            fontSize: `${labelSize}px`,
             color: labelColor,
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: hc ? 3 : 2
         }).setOrigin(0.5, 0);
 
         // Make accessible villain/training nodes clickable
         if (isAccessible && !isDefeated && nodeData.type !== NODE_TYPES.START) {
-            const hitArea = this.add.circle(nodeData.x, nodeData.y, 22, 0xffffff, 0.001);
+            const hitArea = this.add.circle(nodeData.x, nodeData.y, nodeRadius + 6, 0xffffff, 0.001);
             hitArea.setInteractive({ useHandCursor: true });
 
             hitArea.on('pointerover', () => {
                 graphics.clear();
                 graphics.fillStyle(0xff6600, 1);
-                graphics.fillCircle(nodeData.x, nodeData.y, 18);
-                graphics.lineStyle(2, 0xffffff, 1);
-                graphics.strokeCircle(nodeData.x, nodeData.y, 18);
+                graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius + 2);
+                graphics.lineStyle(hc ? 3 : 2, 0xffffff, 1);
+                graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius + 2);
             });
 
             hitArea.on('pointerout', () => {
                 graphics.clear();
                 graphics.fillStyle(fillColor, alpha);
-                graphics.fillCircle(nodeData.x, nodeData.y, 16);
-                graphics.lineStyle(2, strokeColor, alpha);
-                graphics.strokeCircle(nodeData.x, nodeData.y, 16);
+                graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius);
+                graphics.lineStyle(hc ? 3 : 2, strokeColor, alpha);
+                graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius);
             });
 
             hitArea.on('pointerdown', () => {
@@ -181,6 +191,8 @@ export class OverworldScene extends Phaser.Scene {
             return;
         }
 
+        const animSpeed = SettingsScene.getAnimSpeed();
+
         // Stop bobbing during move
         this.tweens.killTweensOf(this.playerSprite);
 
@@ -188,7 +200,7 @@ export class OverworldScene extends Phaser.Scene {
             targets: this.playerSprite,
             x: nodeData.x,
             y: nodeData.y - 28,
-            duration: 400,
+            duration: Math.round(400 / animSpeed),
             ease: 'Power2',
             onComplete: () => {
                 // Restart bobbing at new position
@@ -251,13 +263,17 @@ export class OverworldScene extends Phaser.Scene {
     }
 
     createHUD(width, height) {
+        const hc = SettingsScene.isHighContrast();
+        const scale = SettingsScene.getTextScale();
+        const hudFontSize = Math.round(13 * scale);
+
         // HUD background
-        this.add.rectangle(width / 2, 16, width, 32, 0x000000, 0.7);
+        this.add.rectangle(width / 2, 16, width, 32, 0x000000, hc ? 0.9 : 0.7);
 
         // Player info
         this.add.text(10, 6, `Elmwood Warrior  Lv.${this.player.level}`, {
             fontFamily: 'monospace',
-            fontSize: '13px',
+            fontSize: `${hudFontSize}px`,
             color: '#ffcc00'
         });
 
@@ -266,17 +282,42 @@ export class OverworldScene extends Phaser.Scene {
         const xpText = nextLevelXp ? `XP: ${this.player.xp}/${nextLevelXp}` : `XP: ${this.player.xp} (MAX)`;
         this.add.text(width - 10, 6, xpText, {
             fontFamily: 'monospace',
-            fontSize: '13px',
-            color: '#aaaaaa'
+            fontSize: `${hudFontSize}px`,
+            color: hc ? '#dddddd' : '#aaaaaa'
         }).setOrigin(1, 0);
 
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
         this.add.text(width / 2, 6, `Villains Defeated: ${defeated}/4`, {
             fontFamily: 'monospace',
-            fontSize: '13px',
-            color: '#88cc88'
+            fontSize: `${hudFontSize}px`,
+            color: hc ? '#88ff88' : '#88cc88'
         }).setOrigin(0.5, 0);
+
+        // Bottom bar with back and settings buttons
+        this.add.rectangle(width / 2, height - 16, width, 32, 0x000000, hc ? 0.9 : 0.7);
+
+        const backBtn = this.add.text(10, height - 16, '< Title', {
+            fontFamily: 'monospace',
+            fontSize: `${hudFontSize}px`,
+            color: '#ffffff'
+        }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+
+        backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
+        backBtn.on('pointerout', () => backBtn.setColor('#ffffff'));
+        backBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
+
+        const settingsBtn = this.add.text(width - 10, height - 16, 'Settings >', {
+            fontFamily: 'monospace',
+            fontSize: `${hudFontSize}px`,
+            color: '#ffffff'
+        }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+
+        settingsBtn.on('pointerover', () => settingsBtn.setColor('#ff6600'));
+        settingsBtn.on('pointerout', () => settingsBtn.setColor('#ffffff'));
+        settingsBtn.on('pointerdown', () => {
+            this.scene.start(SCENES.SETTINGS, { returnTo: SCENES.OVERWORLD });
+        });
     }
 
     getNextLevelXp() {

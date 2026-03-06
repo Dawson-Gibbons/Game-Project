@@ -55,6 +55,19 @@ export class TitleScene extends Phaser.Scene {
             continueBtn.on('pointerout', () => continueBtn.setColor('#ffffff'));
             continueBtn.on('pointerdown', () => this.continueGame());
         }
+
+        // Settings button
+        const settingsBtn = this.add.text(width / 2, height * 0.86, '[ Settings ]', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            color: '#888888'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        settingsBtn.on('pointerover', () => settingsBtn.setColor('#ff6600'));
+        settingsBtn.on('pointerout', () => settingsBtn.setColor('#888888'));
+        settingsBtn.on('pointerdown', () => {
+            this.scene.start(SCENES.SETTINGS, { returnTo: SCENES.TITLE });
+        });
     }
 
     startNewGame() {

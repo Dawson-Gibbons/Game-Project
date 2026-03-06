@@ -5,6 +5,7 @@ import { StaminaBar } from '../ui/StaminaBar.js';
 import { BattleMenu } from '../ui/BattleMenu.js';
 import { TextBox } from '../ui/TextBox.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
+import { SettingsScene } from './SettingsScene.js';
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -286,14 +287,21 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async handlePhaseTransition() {
+        const animSpeed = SettingsScene.getAnimSpeed();
+
         // Red flash
         this.tweens.add({
             targets: this.phaseOverlay,
             alpha: 0.6,
-            duration: 200,
+            duration: Math.round(200 / animSpeed),
             yoyo: true,
             repeat: 2
         });
+
+        // Screen shake (if enabled)
+        if (SettingsScene.isScreenShakeEnabled()) {
+            this.cameras.main.shake(Math.round(600 / animSpeed), 0.02);
+        }
 
         await this.showMessage(this.villainData.phase2Taunt, 2000);
         await this.showMessage('Tweaker T entered RAGE MODE!', 1500);
@@ -301,13 +309,14 @@ export class BattleScene extends Phaser.Scene {
 
     async handleBattleEnd(winner) {
         this.battleMenu.clear();
+        const animSpeed = SettingsScene.getAnimSpeed();
 
         if (winner === 'player') {
             // Fade out villain
             this.tweens.add({
                 targets: this.villainSprite,
                 alpha: 0,
-                duration: 800
+                duration: Math.round(800 / animSpeed)
             });
 
             await this.showMessage(`${this.villainData.name} was defeated!`, 1500);
@@ -344,7 +353,7 @@ export class BattleScene extends Phaser.Scene {
             this.tweens.add({
                 targets: this.playerSprite,
                 alpha: 0,
-                duration: 800
+                duration: Math.round(800 / animSpeed)
             });
 
             await this.showMessage('You were defeated...', 2000);
@@ -417,6 +426,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     animateAttack(attacker, defender) {
+        const animSpeed = SettingsScene.getAnimSpeed();
+
         return new Promise((resolve) => {
             const origX = attacker.x;
             const origY = attacker.y;
@@ -428,13 +439,18 @@ export class BattleScene extends Phaser.Scene {
                 targets: attacker,
                 x: origX + dx,
                 y: origY + dy,
-                duration: 100,
+                duration: Math.round(100 / animSpeed),
                 yoyo: true,
                 onComplete: () => {
+                    // Screen shake on hit
+                    if (SettingsScene.isScreenShakeEnabled()) {
+                        this.cameras.main.shake(Math.round(150 / animSpeed), 0.01);
+                    }
+
                     // Flash defender red
                     if (defender.setTint) {
                         defender.setTint(0xff0000);
-                        this.time.delayedCall(200, () => {
+                        this.time.delayedCall(Math.round(200 / animSpeed), () => {
                             defender.clearTint();
                             resolve();
                         });

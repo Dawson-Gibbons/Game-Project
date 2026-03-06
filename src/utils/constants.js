@@ -4,7 +4,8 @@ export const SCENES = {
     TITLE: 'TitleScene',
     OVERWORLD: 'OverworldScene',
     BATTLE: 'BattleScene',
-    DIALOG: 'DialogScene'
+    DIALOG: 'DialogScene',
+    SETTINGS: 'SettingsScene'
 };
 
 export const PLAYER_MOVES = ['park_hands', 'elmwood_elbow', 'warriors_wrath', 'finishing_fury'];
@@ -24,3 +25,4 @@ export const NODE_TYPES = {
 };
 
 export const SAVE_KEY = 'elmwood_save';
+export const SETTINGS_KEY = 'elmwood_settings';
