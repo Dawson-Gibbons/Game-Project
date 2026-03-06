@@ -49,6 +49,12 @@ export class BattleScene extends Phaser.Scene {
         this.setupSprites(width, height);
         this.setupUI(width, height);
 
+        // Music
+        const musicKey = this.isTraining ? 'music_training' : `music_${this.villainId}`;
+        this.music = this.sound.add(musicKey, { loop: true, volume: 0.5 });
+        this.music.play({ seek: 5 });
+        this.events.on('shutdown', () => this.music.stop());
+
         // Start battle
         const introMsg = this.isTraining
             ? 'Training battle started!'

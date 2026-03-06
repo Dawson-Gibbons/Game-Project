@@ -48,6 +48,15 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bg_traininggym', 'Assets/trainingGym.png');
         this.load.image('training_dummy', 'Assets/trainingDummy.png');
 
+        // Music
+        this.load.audio('music_title', 'Assets/Music Assets/EWTitleScreenMusic.mp3');
+        this.load.audio('music_path', 'Assets/Music Assets/EWPathMusic.mp3');
+        this.load.audio('music_training', 'Assets/Music Assets/EWTrainingMusic.mp3');
+        this.load.audio('music_alchemist_a', 'Assets/Music Assets/AlchemistAFightMusic.mp3');
+        this.load.audio('music_dopey_d', 'Assets/Music Assets/DopeyDFightMusic.mp3');
+        this.load.audio('music_tweaker_t', 'Assets/Music Assets/TweakerTFightMusic.mp3');
+        this.load.audio('music_junky_j', 'Assets/Music Assets/JunkyJFightMusic.mp3');
+
         // Data files
         this.load.json('villains_data', 'Assets/data/villains.json');
         this.load.json('moves_data', 'Assets/data/moves.json');

@@ -37,6 +37,11 @@ export class OverworldScene extends Phaser.Scene {
         // HUD
         this.createHUD(width, height);
 
+        // Music
+        this.music = this.sound.add('music_path', { loop: true, volume: 0.5 });
+        this.music.play();
+        this.events.on('shutdown', () => this.music.stop());
+
         // Save current position
         SaveSystem.save(this.player.toSaveData());
     }

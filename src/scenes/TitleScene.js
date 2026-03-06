@@ -101,6 +101,11 @@ export class TitleScene extends Phaser.Scene {
             this.scene.start(SCENES.SETTINGS, { returnTo: SCENES.TITLE });
         });
 
+        // Music
+        this.music = this.sound.add('music_title', { loop: true, volume: 0.5 });
+        this.music.play();
+        this.events.on('shutdown', () => this.music.stop());
+
         // Footer
         this.add.text(width / 2, height * 0.95, 'v1.0', {
             fontFamily: 'monospace',
