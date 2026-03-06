@@ -29,17 +29,16 @@ export class SettingsScene extends Phaser.Scene {
         this.add.rectangle(width / 2, height / 2, width, height, 0x111111);
 
         // Title
-        this.add.text(width / 2, 30, 'SETTINGS', {
-            fontFamily: 'monospace',
-            fontSize: '28px',
-            fontStyle: 'bold',
+        this.add.text(width / 2, 28, 'SETTINGS', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '16px',
             color: '#ff6600',
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5);
 
-        const startY = 80;
-        const rowH = 50;
+        const startY = 75;
+        const rowH = 55;
         let row = 0;
 
         // Text Size
@@ -77,8 +76,8 @@ export class SettingsScene extends Phaser.Scene {
         // Delete Save Data
         row += 0.3;
         const deleteBtn = this.add.text(width / 2, startY + rowH * row, '[ Delete Save Data ]', {
-            fontFamily: 'monospace',
-            fontSize: '16px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: '#cc4444'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -87,11 +86,11 @@ export class SettingsScene extends Phaser.Scene {
         deleteBtn.on('pointerdown', () => this.confirmDeleteSave(deleteBtn));
 
         // Back button
-        const backBtn = this.add.text(40, height - 30, '< Back', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
+        const backBtn = this.add.text(width / 2, height - 30, '< Back', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: '#ffffff'
-        }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true });
 
         backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
         backBtn.on('pointerout', () => backBtn.setColor('#ffffff'));
@@ -99,17 +98,17 @@ export class SettingsScene extends Phaser.Scene {
     }
 
     createCycleOption(width, y, label, options, currentIndex, onChange) {
-        this.add.text(width * 0.15, y, label, {
-            fontFamily: 'monospace',
-            fontSize: '15px',
+        this.add.text(width * 0.46, y, label, {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: '#cccccc'
-        }).setOrigin(0, 0.5);
+        }).setOrigin(1, 0.5);
 
-        const valueText = this.add.text(width * 0.65, y, `< ${options[currentIndex]} >`, {
-            fontFamily: 'monospace',
-            fontSize: '15px',
+        const valueText = this.add.text(width * 0.54, y, `< ${options[currentIndex]} >`, {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: '#ffffff'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
         valueText.on('pointerover', () => valueText.setColor('#ff6600'));
         valueText.on('pointerout', () => valueText.setColor('#ffffff'));
@@ -121,17 +120,17 @@ export class SettingsScene extends Phaser.Scene {
     }
 
     createToggleOption(width, y, label, currentVal, onChange) {
-        this.add.text(width * 0.15, y, label, {
-            fontFamily: 'monospace',
-            fontSize: '15px',
+        this.add.text(width * 0.46, y, label, {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: '#cccccc'
-        }).setOrigin(0, 0.5);
+        }).setOrigin(1, 0.5);
 
-        const valueText = this.add.text(width * 0.65, y, currentVal ? 'ON' : 'OFF', {
-            fontFamily: 'monospace',
-            fontSize: '15px',
+        const valueText = this.add.text(width * 0.54, y, currentVal ? 'ON' : 'OFF', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '10px',
             color: currentVal ? '#44cc44' : '#cc4444'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
         valueText.on('pointerover', () => valueText.setAlpha(0.7));
         valueText.on('pointerout', () => valueText.setAlpha(1));

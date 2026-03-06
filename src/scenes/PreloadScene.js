@@ -15,7 +15,7 @@ export class PreloadScene extends Phaser.Scene {
         barFill.setOrigin(0, 0.5);
 
         const loadText = this.add.text(width / 2, height / 2 - 40, 'Loading...', {
-            fontFamily: 'monospace', fontSize: '18px', color: '#ffffff'
+            fontFamily: '"Press Start 2P"', fontSize: '18px', color: '#ffffff'
         }).setOrigin(0.5);
 
         this.load.on('progress', (value) => {

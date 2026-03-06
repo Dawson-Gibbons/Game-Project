@@ -13,7 +13,7 @@ export class HealthBar {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(12 * scale);
+        const fontSize = Math.round(8 * scale);
 
         // Background bar
         this.bg = scene.add.rectangle(x, y, width, height, hc ? 0x222222 : 0x333333).setOrigin(0, 0.5);
@@ -24,12 +24,12 @@ export class HealthBar {
 
         // Label text
         this.label = scene.add.text(x, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(0, 1);
 
         // Value text
         this.valueText = scene.add.text(x + width, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(1, 1);
 
         this.updateValueText();

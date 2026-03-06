@@ -122,11 +122,11 @@ export class OverworldScene extends Phaser.Scene {
         else symbol = '!';
 
         const scale = SettingsScene.getTextScale();
-        const symbolSize = Math.round(14 * scale);
-        const labelSize = Math.round(11 * scale);
+        const symbolSize = Math.round(10 * scale);
+        const labelSize = Math.round(7 * scale);
 
         this.add.text(nodeData.x, nodeData.y, symbol, {
-            fontFamily: 'monospace',
+            fontFamily: '"Press Start 2P"',
             fontSize: `${symbolSize}px`,
             color: '#ffffff'
         }).setOrigin(0.5);
@@ -140,7 +140,7 @@ export class OverworldScene extends Phaser.Scene {
             label = isTrainingDone ? 'Training (MAX)' : `Training (${tLvl}/${tMax})`;
         }
         this.add.text(nodeData.x, nodeData.y + nodeRadius + 8, label, {
-            fontFamily: 'monospace',
+            fontFamily: '"Press Start 2P"',
             fontSize: `${labelSize}px`,
             color: labelColor,
             stroke: '#000000',
@@ -287,23 +287,23 @@ export class OverworldScene extends Phaser.Scene {
     createHUD(width, height) {
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const hudFontSize = Math.round(13 * scale);
+        const hudFontSize = Math.round(8 * scale);
 
         // HUD background
-        this.add.rectangle(width / 2, 16, width, 32, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, 18, width, 36, 0x000000, hc ? 0.9 : 0.7);
 
         // Player info
-        this.add.text(10, 6, `Elmwood Warrior  Lv.${this.player.level}`, {
-            fontFamily: 'monospace',
+        this.add.text(8, 8, `Warrior Lv.${this.player.level}`, {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffcc00'
         });
 
         // XP display
         const nextLevelXp = this.getNextLevelXp();
-        const xpText = nextLevelXp ? `XP: ${this.player.xp}/${nextLevelXp}` : `XP: ${this.player.xp} (MAX)`;
-        this.add.text(width - 10, 6, xpText, {
-            fontFamily: 'monospace',
+        const xpText = nextLevelXp ? `XP:${this.player.xp}/${nextLevelXp}` : `XP:MAX`;
+        this.add.text(width - 8, 8, xpText, {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#dddddd' : '#aaaaaa'
         }).setOrigin(1, 0);
@@ -311,25 +311,25 @@ export class OverworldScene extends Phaser.Scene {
         // Training level
         const tLvl = this.player.trainingLevel;
         const tMax = balanceConfig.training.maxLevel;
-        this.add.text(width * 0.38, 6, `Training: ${tLvl}/${tMax}`, {
-            fontFamily: 'monospace',
+        this.add.text(width * 0.37, 8, `Train:${tLvl}/${tMax}`, {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: tLvl >= tMax ? (hc ? '#88ff88' : '#88cc88') : '#aaaaaa'
         }).setOrigin(0.5, 0);
 
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
-        this.add.text(width * 0.62, 6, `Villains Defeated: ${defeated}/4`, {
-            fontFamily: 'monospace',
+        this.add.text(width * 0.63, 8, `Defeated:${defeated}/4`, {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#88ff88' : '#88cc88'
         }).setOrigin(0.5, 0);
 
         // Bottom bar with back and settings buttons
-        this.add.rectangle(width / 2, height - 16, width, 32, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, height - 18, width, 36, 0x000000, hc ? 0.9 : 0.7);
 
-        const backBtn = this.add.text(10, height - 16, '< Title', {
-            fontFamily: 'monospace',
+        const backBtn = this.add.text(10, height - 18, '< Title', {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'
         }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
@@ -338,8 +338,8 @@ export class OverworldScene extends Phaser.Scene {
         backBtn.on('pointerout', () => backBtn.setColor('#ffffff'));
         backBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
 
-        const settingsBtn = this.add.text(width - 10, height - 16, 'Settings >', {
-            fontFamily: 'monospace',
+        const settingsBtn = this.add.text(width - 10, height - 18, 'Settings >', {
+            fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'
         }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });

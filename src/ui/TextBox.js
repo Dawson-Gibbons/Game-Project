@@ -13,7 +13,7 @@ export class TextBox {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(14 * scale);
+        const fontSize = Math.round(9 * scale);
 
         // Semi-transparent background
         this.bg = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, hc ? 0.95 : 0.85);
@@ -21,7 +21,7 @@ export class TextBox {
 
         // Text content
         this.text = scene.add.text(x + 12, y + 12, '', {
-            fontFamily: 'monospace',
+            fontFamily: '"Press Start 2P"',
             fontSize: `${fontSize}px`,
             color: '#ffffff',
             wordWrap: { width: width - 24 }
@@ -29,7 +29,7 @@ export class TextBox {
 
         // Click-to-advance indicator
         this.indicator = scene.add.text(x + width - 20, y + height - 18, '▼', {
-            fontFamily: 'monospace', fontSize: '12px', color: hc ? '#ffffff' : '#aaaaaa'
+            fontFamily: '"Press Start 2P"', fontSize: '9px', color: hc ? '#ffffff' : '#aaaaaa'
         }).setVisible(false);
 
         this.setVisible(false);

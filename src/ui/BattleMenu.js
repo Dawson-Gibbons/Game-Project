@@ -19,7 +19,7 @@ export class BattleMenu {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const mainFontSize = Math.round(16 * scale);
+        const mainFontSize = Math.round(11 * scale);
 
         // Background panel
         const bg = this.scene.add.rectangle(
@@ -45,7 +45,7 @@ export class BattleMenu {
             const color = opt.disabled ? (hc ? '#666666' : '#555555') : '#ffffff';
 
             const text = this.scene.add.text(tx, ty, opt.label, {
-                fontFamily: 'monospace',
+                fontFamily: '"Press Start 2P"',
                 fontSize: `${mainFontSize}px`,
                 fontStyle: 'bold',
                 color: color
@@ -70,7 +70,7 @@ export class BattleMenu {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(13 * scale);
+        const fontSize = Math.round(8 * scale);
 
         // Background
         const bg = this.scene.add.rectangle(
@@ -80,13 +80,13 @@ export class BattleMenu {
         bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0xff6600);
         this.elements.push(bg);
 
-        const lineHeight = Math.round(22 * scale);
-        const startY = this.y + 10;
+        const lineHeight = Math.round(20 * scale);
+        const startY = this.y + 12;
 
         // Back button (top-right corner)
         const backBtn = this.scene.add.text(
-            this.x + this.width - 12, this.y + 10, 'Back →',
-            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
+            this.x + this.width - 12, this.y + 10, 'Back',
+            { fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
         ).setOrigin(1, 0).setInteractive({ useHandCursor: true });
         backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
         backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
@@ -99,12 +99,12 @@ export class BattleMenu {
 
             const canAfford = playerStamina >= (move.staminaCost || 0);
             const color = canAfford ? '#ffffff' : (hc ? '#666666' : '#555555');
-            const costStr = move.staminaCost ? ` (${move.staminaCost} SP)` : '';
+            const costStr = move.staminaCost ? ` (${move.staminaCost}SP)` : '';
 
             const text = this.scene.add.text(
                 this.x + 12, startY + index * lineHeight,
                 `${move.name}${costStr}`,
-                { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: color }
+                { fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: color }
             );
 
             if (canAfford) {
@@ -124,7 +124,7 @@ export class BattleMenu {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(13 * scale);
+        const fontSize = Math.round(8 * scale);
 
         const bg = this.scene.add.rectangle(
             this.x + this.width / 2, this.y + this.height / 2,
@@ -133,13 +133,13 @@ export class BattleMenu {
         bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0xff6600);
         this.elements.push(bg);
 
-        const lineHeight = Math.round(22 * scale);
-        const startY = this.y + 10;
+        const lineHeight = Math.round(20 * scale);
+        const startY = this.y + 12;
 
         // Back button (top-right corner)
         const backBtn = this.scene.add.text(
-            this.x + this.width - 12, this.y + 10, 'Back →',
-            { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
+            this.x + this.width - 12, this.y + 10, 'Back',
+            { fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: hc ? '#cccccc' : '#aaaaaa' }
         ).setOrigin(1, 0).setInteractive({ useHandCursor: true });
         backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
         backBtn.on('pointerout', () => backBtn.setColor(hc ? '#cccccc' : '#aaaaaa'));
@@ -155,7 +155,7 @@ export class BattleMenu {
             const text = this.scene.add.text(
                 this.x + 12, startY + index * lineHeight,
                 `${item.name} x${qty}`,
-                { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff' }
+                { fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff' }
             ).setInteractive({ useHandCursor: true });
 
             text.on('pointerover', () => text.setColor('#ff6600'));
@@ -168,8 +168,8 @@ export class BattleMenu {
         if (index === 0) {
             const empty = this.scene.add.text(
                 this.x + 12, startY,
-                'No items available',
-                { fontFamily: 'monospace', fontSize: `${fontSize}px`, color: hc ? '#666666' : '#555555' }
+                'No items',
+                { fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: hc ? '#666666' : '#555555' }
             );
             this.elements.push(empty);
         }

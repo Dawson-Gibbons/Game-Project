@@ -19,42 +19,40 @@ export class TitleScene extends Phaser.Scene {
 
         // Title
         this.add.text(width / 2, height * 0.18, 'ELMWOOD', {
-            fontFamily: 'monospace',
-            fontSize: '48px',
-            fontStyle: 'bold',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '28px',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6,
-            letterSpacing: 8
+            letterSpacing: 6
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, height * 0.28, 'WARRIOR', {
-            fontFamily: 'monospace',
-            fontSize: '36px',
-            fontStyle: 'bold',
+        this.add.text(width / 2, height * 0.30, 'WARRIOR', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '20px',
             color: '#ff6600',
             stroke: '#000000',
             strokeThickness: 5,
-            letterSpacing: 6
+            letterSpacing: 4
         }).setOrigin(0.5);
 
         // Divider line
         const divider = this.add.graphics();
         divider.lineStyle(2, 0xff6600, 0.6);
-        divider.lineBetween(width * 0.3, height * 0.35, width * 0.7, height * 0.35);
+        divider.lineBetween(width * 0.3, height * 0.39, width * 0.7, height * 0.39);
 
         // Subtitle
-        this.add.text(width / 2, height * 0.40, 'Defend Elmwood Park', {
-            fontFamily: 'monospace',
-            fontSize: '14px',
+        this.add.text(width / 2, height * 0.43, 'Defend Elmwood Park', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '8px',
             color: '#cccccc',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 2
         }).setOrigin(0.5);
 
         // Menu panel background
-        const panelY = height * 0.62;
-        const panelH = 150;
+        const panelY = height * 0.65;
+        const panelH = 140;
         const panel = this.add.graphics();
         panel.fillStyle(0x000000, 0.55);
         panel.fillRoundedRect(width * 0.25, panelY - panelH / 2, width * 0.5, panelH, 12);
@@ -63,8 +61,8 @@ export class TitleScene extends Phaser.Scene {
 
         // Menu buttons
         const btnStyle = {
-            fontFamily: 'monospace',
-            fontSize: '20px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '13px',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 3
@@ -72,17 +70,17 @@ export class TitleScene extends Phaser.Scene {
 
         const hasSave = SaveSystem.hasSave();
 
-        const newGameBtn = this.add.text(width / 2, panelY - 32, 'New Game', btnStyle)
+        const newGameBtn = this.add.text(width / 2, panelY - 38, 'New Game', btnStyle)
             .setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-        const continueBtn = this.add.text(width / 2, panelY + 8, 'Continue', {
+        const continueBtn = this.add.text(width / 2, panelY + 2, 'Continue', {
             ...btnStyle,
             color: hasSave ? '#ffffff' : '#555555'
         }).setOrigin(0.5);
 
-        const settingsBtn = this.add.text(width / 2, panelY + 48, 'Settings', {
+        const settingsBtn = this.add.text(width / 2, panelY + 42, 'Settings', {
             ...btnStyle,
-            fontSize: '16px',
+            fontSize: '11px',
             color: '#999999'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -108,8 +106,8 @@ export class TitleScene extends Phaser.Scene {
 
         // Footer
         this.add.text(width / 2, height * 0.95, 'v1.0', {
-            fontFamily: 'monospace',
-            fontSize: '10px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '8px',
             color: '#555555',
             stroke: '#000000',
             strokeThickness: 2
