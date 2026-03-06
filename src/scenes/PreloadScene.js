@@ -42,6 +42,8 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bg_playground', 'Assets/PixelElmwoodPlayground.png');
         this.load.image('bg_splashpark', 'Assets/PixelSplashPark.png');
         this.load.image('bg_4waystop', 'Assets/Pixel4WayStop.png');
+        this.load.image('bg_traininggym', 'Assets/trainingGym.png');
+        this.load.image('training_dummy', 'Assets/trainingDummy.png');
 
         // Data files
         this.load.json('villains_data', 'Assets/data/villains.json');
