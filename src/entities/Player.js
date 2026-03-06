@@ -1,5 +1,6 @@
 import { balanceConfig } from '../config/balanceConfig.js';
 import { PLAYER_MOVES, TAUNT_MOVES } from '../utils/constants.js';
+import { SettingsScene } from '../scenes/SettingsScene.js';
 
 export class Player {
     constructor(saveData) {
@@ -47,7 +48,7 @@ export class Player {
     }
 
     getDamageMultiplier() {
-        return Math.pow(1 + balanceConfig.tokens.damageBoostPercent, this.damageBoostCount);
+        return 1 + (this.damageBoostCount * balanceConfig.tokens.damageBoostPercent);
     }
 
     getTokenMultiplier() {
@@ -111,6 +112,7 @@ export class Player {
     }
 
     spendTokens(amount) {
+        if (SettingsScene.isDevMode()) return true;
         if (this.tokens < amount) return false;
         this.tokens -= amount;
         return true;

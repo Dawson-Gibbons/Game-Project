@@ -4,7 +4,8 @@ const DEFAULTS = {
     textSize: 1,       // 0=small, 1=medium, 2=large
     highContrast: false,
     animSpeed: 1,      // 0=slow, 1=normal, 2=fast
-    screenShake: true
+    screenShake: true,
+    devMode: false
 };
 
 const TEXT_SIZES = ['Small', 'Medium', 'Large'];
@@ -69,6 +70,14 @@ export class SettingsScene extends Phaser.Scene {
         this.createToggleOption(width, startY + rowH * row, 'Screen Shake',
             this.settings.screenShake, (val) => {
                 this.settings.screenShake = val;
+                this.applyAndSave();
+            });
+        row++;
+
+        // Dev Mode
+        this.createToggleOption(width, startY + rowH * row, 'Dev Mode',
+            this.settings.devMode, (val) => {
+                this.settings.devMode = val;
                 this.applyAndSave();
             });
         row++;
@@ -193,5 +202,9 @@ export class SettingsScene extends Phaser.Scene {
 
     static isScreenShakeEnabled() {
         return SettingsScene.loadSettings().screenShake;
+    }
+
+    static isDevMode() {
+        return SettingsScene.loadSettings().devMode;
     }
 }

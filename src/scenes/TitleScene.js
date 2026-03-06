@@ -105,7 +105,7 @@ export class TitleScene extends Phaser.Scene {
         this.events.on('shutdown', () => this.music.stop());
 
         // Footer
-        this.add.text(width / 2, height * 0.95, 'v1.0', {
+        this.add.text(width / 2, height * 0.95, 'v 1.1', {
             fontFamily: '"Press Start 2P"',
             fontSize: '8px',
             color: '#555555',

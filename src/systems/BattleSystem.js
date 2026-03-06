@@ -91,13 +91,13 @@ export class BattleSystem {
             };
         }
 
-        // Training dummy: true base damage; normal fights: scale with atk and boosts
+        // Training dummy: base damage scaled by boost only (no atk scaling); normal fights: scale with atk and boosts
         let damage;
         if (this.isTraining) {
-            damage = move.baseDamage;
+            damage = Math.round(move.baseDamage * this.playerDamageMultiplier);
         } else {
             const atkMod = this.getEffectivePlayerAtk() / 10;
-            damage = Math.floor(move.baseDamage * atkMod * this.playerDamageMultiplier);
+            damage = Math.round(move.baseDamage * atkMod * this.playerDamageMultiplier);
         }
         this.villainHp = Math.max(0, this.villainHp - damage);
 

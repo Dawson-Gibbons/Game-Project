@@ -286,6 +286,39 @@ export class OverworldScene extends Phaser.Scene {
         // Shop background
         this.shopContainer = this.add.container(0, 0).setDepth(50);
 
+        // Dev mode: +tokens panel above shop
+        if (SettingsScene.isDevMode()) {
+            const devH = 30;
+            const devY = shopY - devH - 4;
+            const devBg = this.add.rectangle(
+                shopX + shopWidth / 2, devY + devH / 2,
+                shopWidth, devH, 0x331100, 0.9
+            );
+            devBg.setStrokeStyle(1, 0xff6600);
+            this.shopContainer.add(devBg);
+
+            const devLabel = this.add.text(shopX + 4, devY + 3, '+T', {
+                fontFamily: '"Press Start 2P"', fontSize: `${Math.round(6 * scale)}px`, color: '#ff6600'
+            });
+            this.shopContainer.add(devLabel);
+
+            const amounts = [10, 50, 100, 500];
+            amounts.forEach((amt, i) => {
+                const btn = this.add.text(shopX + 28 + i * 34, devY + devH / 2, `${amt}`, {
+                    fontFamily: '"Press Start 2P"', fontSize: `${Math.round(6 * scale)}px`, color: '#ffffff'
+                }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+
+                btn.on('pointerover', () => btn.setColor('#ff6600'));
+                btn.on('pointerout', () => btn.setColor('#ffffff'));
+                btn.on('pointerdown', () => {
+                    this.player.tokens += amt;
+                    SaveSystem.save(this.player.toSaveData());
+                    this.scene.restart();
+                });
+                this.shopContainer.add(btn);
+            });
+        }
+
         const bg = this.add.rectangle(
             shopX + shopWidth / 2, shopY + shopHeight / 2,
             shopWidth, shopHeight, 0x111111, hc ? 0.95 : 0.85

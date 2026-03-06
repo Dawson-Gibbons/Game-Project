@@ -366,7 +366,7 @@ export class BattleScene extends Phaser.Scene {
         // Cover screen
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.8).setDepth(200);
 
-        this.add.text(width / 2, height * 0.3, 'VICTORY!', {
+        this.add.text(width / 2, height * 0.25, 'VICTORY!', {
             fontFamily: 'monospace',
             fontSize: '48px',
             fontStyle: 'bold',
@@ -375,21 +375,34 @@ export class BattleScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5).setDepth(201);
 
-        this.add.text(width / 2, height * 0.5, 'Elmwood Park is safe!', {
+        this.add.text(width / 2, height * 0.42, 'Elmwood Park is safe!', {
             fontFamily: 'monospace',
             fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0.5).setDepth(201);
 
-        const restartBtn = this.add.text(width / 2, height * 0.7, '[ Return to Title ]', {
+        const mapBtn = this.add.text(width / 2, height * 0.58, '[ Return to Map ]', {
             fontFamily: 'monospace',
             fontSize: '18px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
 
-        restartBtn.on('pointerover', () => restartBtn.setColor('#ff6600'));
-        restartBtn.on('pointerout', () => restartBtn.setColor('#ffffff'));
-        restartBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
+        mapBtn.on('pointerover', () => mapBtn.setColor('#ff6600'));
+        mapBtn.on('pointerout', () => mapBtn.setColor('#ffffff'));
+        mapBtn.on('pointerdown', () => {
+            this.player.fullHeal();
+            this.scene.start(SCENES.OVERWORLD);
+        });
+
+        const titleBtn = this.add.text(width / 2, height * 0.72, '[ Return to Title ]', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            color: '#999999'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
+
+        titleBtn.on('pointerover', () => titleBtn.setColor('#ff6600'));
+        titleBtn.on('pointerout', () => titleBtn.setColor('#999999'));
+        titleBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
     }
 
     showDefeatOptions() {
