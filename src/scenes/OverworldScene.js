@@ -175,7 +175,7 @@ export class OverworldScene extends Phaser.Scene {
         if (!currentNode) return;
 
         this.playerSprite = this.add.image(currentNode.x, currentNode.y - 28, 'dawson_small');
-        const scale = Math.min(32 / this.playerSprite.width, 32 / this.playerSprite.height);
+        const scale = Math.min(48 / this.playerSprite.width, 48 / this.playerSprite.height);
         this.playerSprite.setScale(scale);
         this.playerSprite.setDepth(10);
 

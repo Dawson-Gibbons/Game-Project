@@ -24,12 +24,12 @@ export class HealthBar {
 
         // Label text
         this.label = scene.add.text(x, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff'
+            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(0, 1);
 
         // Value text
         this.valueText = scene.add.text(x + width, y - height - 4, '', {
-            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff'
+            fontFamily: 'monospace', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(1, 1);
 
         this.updateValueText();

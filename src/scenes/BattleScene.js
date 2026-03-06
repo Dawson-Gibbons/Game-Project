@@ -68,28 +68,21 @@ export class BattleScene extends Phaser.Scene {
     setupSprites(width, height) {
         // Villain sprite (upper right)
         if (this.villainData.spriteKey) {
-            this.villainSprite = this.add.image(width * 0.72, height * 0.28, this.villainData.spriteKey);
-            this.scaleToFit(this.villainSprite, 130, 130);
+            this.villainSprite = this.add.image(width * 0.72, height * 0.38, this.villainData.spriteKey);
+            this.scaleToFit(this.villainSprite, 195, 195);
         } else {
             // Training dummy placeholder
-            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.28, 100, 120, 0x886644);
-            const dummyLabel = this.add.text(width * 0.72, height * 0.28, '?', {
+            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.38, 100, 120, 0x886644);
+            const dummyLabel = this.add.text(width * 0.72, height * 0.38, '?', {
                 fontFamily: 'monospace', fontSize: '48px', color: '#ffffff'
             }).setOrigin(0.5);
         }
 
-        // Villain border
-        const vb = this.villainSprite.getBounds();
-        this.add.rectangle(vb.centerX, vb.centerY, vb.width + 6, vb.height + 6)
-            .setStrokeStyle(2, 0xff4444).setFillStyle();
 
         // Player sprite (lower left)
         this.playerSprite = this.add.image(width * 0.22, height * 0.45, 'dawson_big');
-        this.scaleToFit(this.playerSprite, 120, 120);
+        this.scaleToFit(this.playerSprite, 180, 180);
 
-        const pb = this.playerSprite.getBounds();
-        this.add.rectangle(pb.centerX, pb.centerY, pb.width + 6, pb.height + 6)
-            .setStrokeStyle(2, 0x4444ff).setFillStyle();
     }
 
     scaleToFit(image, maxW, maxH) {
@@ -106,12 +99,12 @@ export class BattleScene extends Phaser.Scene {
         this.villainHpBar.setValue(this.villainData.hp, this.villainData.hp);
 
         // Player HP bar — pushed down to 0.68 so label clears the player sprite (~y262)
-        this.playerHpBar = new HealthBar(this, 30, height * 0.68, 180, 14, this.player.maxHp, 0x44cc44);
+        this.playerHpBar = new HealthBar(this, 30, height * 0.58, 180, 14, this.player.maxHp, 0x44cc44);
         this.playerHpBar.setLabel('Elmwood Warrior');
         this.playerHpBar.setValue(this.player.hp, this.player.maxHp);
 
         // Player Stamina bar — 26px below HP bar, leaves gap before text box at height-110
-        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.68 + 26, 180, 10, this.player.maxStamina);
+        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.58 + 36, 180, 10, this.player.maxStamina);
         this.playerStaminaBar.setLabel('Stamina');
         this.playerStaminaBar.setValue(this.player.stamina, this.player.maxStamina);
 
