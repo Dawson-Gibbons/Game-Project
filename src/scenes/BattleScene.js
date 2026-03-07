@@ -380,7 +380,7 @@ export class BattleScene extends Phaser.Scene {
 
             if (livesLeft <= 0) {
                 this.player.resetLives();
-                SaveSystem.save(this.player.toSaveData());
+                SaveSystem.deleteSave();
                 this.showGameOverScreen();
             } else {
                 await this.showMessage(`${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} remaining!`, 1500);

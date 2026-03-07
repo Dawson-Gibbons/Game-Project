@@ -52,8 +52,22 @@ export class OverworldScene extends Phaser.Scene {
     drawPaths() {
         const hc = SettingsScene.isHighContrast();
         const graphics = this.add.graphics();
-        graphics.lineStyle(hc ? 5 : 3, hc ? 0xffffff : 0xccaa66, hc ? 0.9 : 0.6);
 
+        // Outer glow / outline (dark border behind path)
+        graphics.lineStyle(hc ? 9 : 7, 0x000000, hc ? 0.7 : 0.5);
+        this.nodesData.edges.forEach(([fromId, toId]) => {
+            const fromNode = this.nodesData.nodes.find(n => n.id === fromId);
+            const toNode = this.nodesData.nodes.find(n => n.id === toId);
+            if (fromNode && toNode) {
+                graphics.beginPath();
+                graphics.moveTo(fromNode.x, fromNode.y);
+                graphics.lineTo(toNode.x, toNode.y);
+                graphics.strokePath();
+            }
+        });
+
+        // Main path line
+        graphics.lineStyle(hc ? 5 : 3, hc ? 0xffffff : 0xccaa66, hc ? 0.9 : 0.7);
         this.nodesData.edges.forEach(([fromId, toId]) => {
             const fromNode = this.nodesData.nodes.find(n => n.id === fromId);
             const toNode = this.nodesData.nodes.find(n => n.id === toId);
@@ -135,14 +149,16 @@ export class OverworldScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Label below node
-        const labelColor = isAccessible || isDefeated || isTrainingDone ? '#ffffff' : (hc ? '#aaaaaa' : '#888888');
-        let label = isAccessible || isDefeated || isTrainingDone ? nodeData.label : '???';
-        this.add.text(nodeData.x, nodeData.y + nodeRadius + 8, label, {
+        const isKnown = isAccessible || isDefeated || isTrainingDone;
+        const labelColor = isKnown ? '#ffffff' : (hc ? '#bbbbbb' : '#999999');
+        let label = isKnown ? nodeData.label : '???';
+        this.add.text(nodeData.x, nodeData.y + nodeRadius + 10, label, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${labelSize}px`,
             color: labelColor,
             stroke: '#000000',
-            strokeThickness: hc ? 3 : 2
+            strokeThickness: isKnown ? (hc ? 3 : 2) : 4,
+            shadow: isKnown ? {} : { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5, 0);
 
         // Make accessible villain/training nodes clickable
@@ -293,11 +309,17 @@ export class OverworldScene extends Phaser.Scene {
         const statY = shopY - statH;
         const dmgPercent = Math.round((this.player.getDamageMultiplier() - 1) * 100);
 
+        const statShadow = this.add.rectangle(
+            shopX + shopWidth / 2 + 3, statY + statH / 2 + 3,
+            shopWidth, statH, 0x000000, 0.4
+        );
+        this.shopContainer.add(statShadow);
+
         const statBg = this.add.rectangle(
             shopX + shopWidth / 2, statY + statH / 2,
-            shopWidth, statH, 0x111111, hc ? 0.95 : 0.85
+            shopWidth, statH, 0x111111, hc ? 0.95 : 0.88
         );
-        statBg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
+        statBg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x888888);
         this.shopContainer.add(statBg);
 
         const statLines = [
@@ -353,11 +375,18 @@ export class OverworldScene extends Phaser.Scene {
             });
         }
 
+        // Drop shadow behind shop
+        const shadow = this.add.rectangle(
+            shopX + shopWidth / 2 + 3, shopY + shopHeight / 2 + 3,
+            shopWidth, shopHeight, 0x000000, 0.4
+        );
+        this.shopContainer.add(shadow);
+
         const bg = this.add.rectangle(
             shopX + shopWidth / 2, shopY + shopHeight / 2,
-            shopWidth, shopHeight, 0x111111, hc ? 0.95 : 0.85
+            shopWidth, shopHeight, 0x111111, hc ? 0.95 : 0.88
         );
-        bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
+        bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x888888);
         this.shopContainer.add(bg);
 
         // Title with token count
@@ -437,20 +466,20 @@ export class OverworldScene extends Phaser.Scene {
             color: '#ffcc00'
         });
 
-        // Lives display
-        this.add.text(width * 0.32, 5, '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0', {
-            fontFamily: 'monospace',
-            fontSize: `${Math.round(14 * scale)}px`,
-            color: '#ff4444',
-            stroke: '#ffffff',
-            strokeThickness: 2
-        }).setOrigin(0.5, 0);
-
         // Token display
         this.add.text(width - 8, 5, `Tokens:${this.player.tokens}`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#dddddd' : '#aaaaaa'
+        }).setOrigin(1, 0);
+
+        // Lives display (below Tokens, on map)
+        this.add.text(width - 8, 30, '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0', {
+            fontFamily: 'monospace',
+            fontSize: `${Math.round(14 * scale)}px`,
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 2
         }).setOrigin(1, 0);
 
         // Defeated count
