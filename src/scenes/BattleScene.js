@@ -55,6 +55,9 @@ export class BattleScene extends Phaser.Scene {
         this.music.play({ seek: 5 });
         this.events.on('shutdown', () => this.music.stop());
 
+        // Track how many fight moves the player has used (run is disabled after 2)
+        this.playerAttackCount = 0;
+
         // Start battle
         const introMsg = this.isTraining
             ? 'Training battle started!'
@@ -108,6 +111,15 @@ export class BattleScene extends Phaser.Scene {
         this.playerStaminaBar.setLabel('Stamina');
         this.playerStaminaBar.setValue(this.player.stamina, this.player.maxStamina);
 
+        // Lives display (top right)
+        this.livesText = this.add.text(width - 10, 6, this.getLivesString(), {
+            fontFamily: 'monospace',
+            fontSize: '32px',
+            color: '#ff4444',
+            stroke: '#ffffff',
+            strokeThickness: 3
+        }).setOrigin(1, 0);
+
         // Text box (bottom of screen)
         this.textBox = new TextBox(this, 10, height - 110, width * 0.48, 100);
 
@@ -133,7 +145,7 @@ export class BattleScene extends Phaser.Scene {
 
         this.battleMenu.showMainMenu((action) => {
             this.handleMenuAction(action);
-        }, true);
+        }, this.playerAttackCount < 2);
     }
 
     handleMenuAction(action) {
@@ -194,6 +206,12 @@ export class BattleScene extends Phaser.Scene {
             await this.showMessage(result.message);
             this.showPlayerMenu();
             return;
+        }
+
+        // Count fight moves (not taunts) toward the run lock
+        const moveData = this.movesData[moveId];
+        if (moveData && moveData.type !== 'taunt') {
+            this.playerAttackCount++;
         }
 
         // Attack animation
@@ -355,7 +373,19 @@ export class BattleScene extends Phaser.Scene {
             });
 
             await this.showMessage('You were defeated...', 2000);
-            this.showDefeatOptions();
+
+            const livesLeft = this.player.loseLife();
+            this.updateLivesDisplay();
+            SaveSystem.save(this.player.toSaveData());
+
+            if (livesLeft <= 0) {
+                this.player.resetLives();
+                SaveSystem.save(this.player.toSaveData());
+                this.showGameOverScreen();
+            } else {
+                await this.showMessage(`${livesLeft} ${livesLeft === 1 ? 'life' : 'lives'} remaining!`, 1500);
+                this.showDefeatOptions();
+            }
         }
     }
 
@@ -434,6 +464,50 @@ export class BattleScene extends Phaser.Scene {
             this.player.fullHeal();
             this.scene.start(SCENES.OVERWORLD);
         });
+    }
+
+    showGameOverScreen() {
+        const { width, height } = this.cameras.main;
+
+        this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85).setDepth(200);
+
+        this.add.text(width / 2, height * 0.25, 'GAME OVER', {
+            fontFamily: 'monospace',
+            fontSize: '48px',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5).setDepth(201);
+
+        this.add.text(width / 2, height * 0.42, 'All lives lost...', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            color: '#ffffff'
+        }).setOrigin(0.5).setDepth(201);
+
+        const restartBtn = this.add.text(width / 2, height * 0.60, '[ Play Again ]', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            color: '#ffffff'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
+
+        restartBtn.on('pointerover', () => restartBtn.setColor('#ff6600'));
+        restartBtn.on('pointerout', () => restartBtn.setColor('#ffffff'));
+        restartBtn.on('pointerdown', () => {
+            if (this.music) this.music.stop();
+            this.scene.start(SCENES.TITLE);
+        });
+    }
+
+    getLivesString() {
+        return '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0';
+    }
+
+    updateLivesDisplay() {
+        if (this.livesText) {
+            this.livesText.setText(this.getLivesString());
+        }
     }
 
     animateAttack(attacker, defender) {

@@ -437,6 +437,15 @@ export class OverworldScene extends Phaser.Scene {
             color: '#ffcc00'
         });
 
+        // Lives display
+        this.add.text(width * 0.32, 5, '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0', {
+            fontFamily: 'monospace',
+            fontSize: `${Math.round(14 * scale)}px`,
+            color: '#ff4444',
+            stroke: '#ffffff',
+            strokeThickness: 2
+        }).setOrigin(0.5, 0);
+
         // Token display
         this.add.text(width - 8, 5, `Tokens:${this.player.tokens}`, {
             fontFamily: '"Press Start 2P"',

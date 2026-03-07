@@ -15,6 +15,7 @@ export class Player {
             this.staminaBoostCount = saveData.staminaBoostCount || 0;
             this.unlockedMoveCount = saveData.unlockedMoveCount || 0;
             this.bossTokensClaimed = saveData.bossTokensClaimed || [];
+            this.lives = saveData.lives !== undefined ? saveData.lives : 3;
         } else {
             this.defeatedVillains = [];
             this.currentNodeId = 'start';
@@ -26,6 +27,7 @@ export class Player {
             this.staminaBoostCount = 0;
             this.unlockedMoveCount = 0;
             this.bossTokensClaimed = [];
+            this.lives = 3;
         }
 
         this.maxHp = this.getMaxHp();
@@ -59,6 +61,15 @@ export class Player {
         if (this.rebirthCount >= 2) return { big: 'ryland_big', small: 'ryland_small' };
         if (this.rebirthCount >= 1) return { big: 'mary_big', small: 'mary_small' };
         return { big: 'dawson_big', small: 'dawson_small' };
+    }
+
+    loseLife() {
+        this.lives = Math.max(0, this.lives - 1);
+        return this.lives;
+    }
+
+    resetLives() {
+        this.lives = 3;
     }
 
     fullHeal() {
@@ -207,7 +218,8 @@ export class Player {
             healthBoostCount: this.healthBoostCount,
             staminaBoostCount: this.staminaBoostCount,
             unlockedMoveCount: this.unlockedMoveCount,
-            bossTokensClaimed: this.bossTokensClaimed
+            bossTokensClaimed: this.bossTokensClaimed,
+            lives: this.lives
         };
     }
 }
