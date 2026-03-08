@@ -5,6 +5,7 @@ import { OverworldScene } from '../scenes/OverworldScene.js';
 import { BattleScene } from '../scenes/BattleScene.js';
 import { DialogScene } from '../scenes/DialogScene.js';
 import { SettingsScene } from '../scenes/SettingsScene.js';
+import { TutorialScene } from '../scenes/TutorialScene.js';
 
 export const gameConfig = {
     type: Phaser.AUTO,
@@ -23,6 +24,6 @@ export const gameConfig = {
     },
     scene: [
         BootScene, PreloadScene, TitleScene,
-        OverworldScene, BattleScene, DialogScene, SettingsScene
+        OverworldScene, BattleScene, DialogScene, SettingsScene, TutorialScene
     ]
 };
