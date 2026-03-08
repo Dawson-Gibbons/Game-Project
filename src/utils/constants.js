@@ -5,7 +5,8 @@ export const SCENES = {
     OVERWORLD: 'OverworldScene',
     BATTLE: 'BattleScene',
     DIALOG: 'DialogScene',
-    SETTINGS: 'SettingsScene'
+    SETTINGS: 'SettingsScene',
+    TUTORIAL: 'TutorialScene'
 };
 
 export const PLAYER_MOVES = ['park_hands', 'elmwood_elbow', 'warriors_wrath', 'finishing_fury'];

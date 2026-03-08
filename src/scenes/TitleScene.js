@@ -52,7 +52,7 @@ export class TitleScene extends Phaser.Scene {
 
         // Menu panel background
         const panelY = height * 0.65;
-        const panelH = 140;
+        const panelH = 175;
         const panel = this.add.graphics();
         panel.fillStyle(0x000000, 0.55);
         panel.fillRoundedRect(width * 0.25, panelY - panelH / 2, width * 0.5, panelH, 12);
@@ -70,15 +70,21 @@ export class TitleScene extends Phaser.Scene {
 
         const hasSave = SaveSystem.hasSave();
 
-        const newGameBtn = this.add.text(width / 2, panelY - 38, 'New Game', btnStyle)
+        const newGameBtn = this.add.text(width / 2, panelY - 52, 'New Game', btnStyle)
             .setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-        const continueBtn = this.add.text(width / 2, panelY + 2, 'Continue', {
+        const continueBtn = this.add.text(width / 2, panelY - 14, 'Continue', {
             ...btnStyle,
             color: hasSave ? '#ffffff' : '#555555'
         }).setOrigin(0.5);
 
-        const settingsBtn = this.add.text(width / 2, panelY + 42, 'Settings', {
+        const howToPlayBtn = this.add.text(width / 2, panelY + 24, 'How to Play', {
+            ...btnStyle,
+            fontSize: '11px',
+            color: '#ffcc00'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        const settingsBtn = this.add.text(width / 2, panelY + 58, 'Settings', {
             ...btnStyle,
             fontSize: '11px',
             color: '#999999'
@@ -93,6 +99,11 @@ export class TitleScene extends Phaser.Scene {
             this.addButtonHover(continueBtn, '#ff6600', '#ffffff');
             continueBtn.on('pointerdown', () => this.continueGame());
         }
+
+        this.addButtonHover(howToPlayBtn, '#ff6600', '#ffcc00');
+        howToPlayBtn.on('pointerdown', () => {
+            this.scene.start(SCENES.TUTORIAL);
+        });
 
         this.addButtonHover(settingsBtn, '#ff6600', '#999999');
         settingsBtn.on('pointerdown', () => {
