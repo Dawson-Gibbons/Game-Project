@@ -13,23 +13,23 @@ export class HealthBar {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(8 * scale);
+        const fontSize = Math.round(16 * scale);
 
         // Background bar
         this.bg = scene.add.rectangle(x, y, width, height, hc ? 0x222222 : 0x333333).setOrigin(0, 0.5);
-        this.bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x666666);
+        this.bg.setStrokeStyle(hc ? 4 : 2, hc ? 0xffffff : 0x666666);
 
         // Fill bar
-        this.fill = scene.add.rectangle(x + 1, y, width - 2, height - 2, color).setOrigin(0, 0.5);
+        this.fill = scene.add.rectangle(x + 2, y, width - 4, height - 4, color).setOrigin(0, 0.5);
 
         // Label text
-        this.label = scene.add.text(x, y - height - 4, '', {
-            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
+        this.label = scene.add.text(x, y - height - 8, '', {
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 6
         }).setOrigin(0, 1);
 
         // Value text
-        this.valueText = scene.add.text(x + width, y - height - 4, '', {
-            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 3
+        this.valueText = scene.add.text(x + width, y - height - 8, '', {
+            fontFamily: '"Press Start 2P"', fontSize: `${fontSize}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 6
         }).setOrigin(1, 1);
 
         this.updateValueText();
@@ -43,7 +43,7 @@ export class HealthBar {
         if (max !== undefined) this.maxValue = max;
         this.currentValue = Math.max(0, Math.min(current, this.maxValue));
         const ratio = this.currentValue / this.maxValue;
-        const targetWidth = (this.width - 2) * ratio;
+        const targetWidth = (this.width - 4) * ratio;
 
         // Color shift: green -> yellow -> red
         let barColor;

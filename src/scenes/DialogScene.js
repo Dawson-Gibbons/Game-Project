@@ -18,7 +18,7 @@ export class DialogScene extends Phaser.Scene {
         this.overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.6);
 
         // TextBox at bottom
-        this.textBox = new TextBox(this, 50, height - 120, width - 100, 100);
+        this.textBox = new TextBox(this, 100, height - 240, width - 200, 200);
         this.textBox.showText(this.dialogText, () => {
             this.textBox.destroy();
             this.overlay.destroy();

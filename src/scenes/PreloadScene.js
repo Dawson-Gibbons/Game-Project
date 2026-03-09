@@ -10,16 +10,16 @@ export class PreloadScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        const barBg = this.add.rectangle(width / 2, height / 2, 320, 30, 0x222222);
-        const barFill = this.add.rectangle(width / 2 - 155, height / 2, 0, 22, 0x44aa44);
+        const barBg = this.add.rectangle(width / 2, height / 2, 640, 60, 0x222222);
+        const barFill = this.add.rectangle(width / 2 - 310, height / 2, 0, 44, 0x44aa44);
         barFill.setOrigin(0, 0.5);
 
-        const loadText = this.add.text(width / 2, height / 2 - 40, 'Loading...', {
-            fontFamily: '"Press Start 2P"', fontSize: '18px', color: '#ffffff'
+        const loadText = this.add.text(width / 2, height / 2 - 80, 'Loading...', {
+            fontFamily: '"Press Start 2P"', fontSize: '36px', color: '#ffffff'
         }).setOrigin(0.5);
 
         this.load.on('progress', (value) => {
-            barFill.width = 310 * value;
+            barFill.width = 620 * value;
         });
 
         this.load.on('complete', () => {

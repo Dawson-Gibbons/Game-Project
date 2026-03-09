@@ -170,7 +170,7 @@ export class TutorialScene extends Phaser.Scene {
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.80);
 
         // Panel bounds — all content must stay within these
-        const pad = 16;
+        const pad = 32;
         this.panelLeft = width * 0.11;
         this.panelRight = width * 0.89;
         this.panelTop = height * 0.06;
@@ -183,7 +183,7 @@ export class TutorialScene extends Phaser.Scene {
         const panelY = this.panelTop + panelH / 2;
 
         this.panelBg = this.add.rectangle(panelX, panelY, panelW, panelH, 0x111111, 0.92);
-        this.panelBg.setStrokeStyle(2, 0xff6600, 0.6);
+        this.panelBg.setStrokeStyle(4, 0xff6600, 0.6);
 
         // Navigation
         this.createNavigation(width, height);
@@ -204,7 +204,7 @@ export class TutorialScene extends Phaser.Scene {
         // Previous button
         this.prevBtn = this.add.text(width * 0.22, navY, '< Prev', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -215,14 +215,14 @@ export class TutorialScene extends Phaser.Scene {
         // Page indicator
         this.pageText = this.add.text(width / 2, navY, '', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '8px',
+            fontSize: '16px',
             color: '#888888'
         }).setOrigin(0.5);
 
         // Next button
         this.nextBtn = this.add.text(width * 0.78, navY, 'Next >', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -231,12 +231,12 @@ export class TutorialScene extends Phaser.Scene {
         this.nextBtn.on('pointerdown', () => this.nextPage());
 
         // Back button (top-left)
-        const backBtn = this.add.text(16, 12, '< Back', {
+        const backBtn = this.add.text(32, 24, '< Back', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '9px',
+            fontSize: '18px',
             color: '#999999',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 4
         }).setInteractive({ useHandCursor: true });
 
         backBtn.on('pointerover', () => backBtn.setColor('#ff6600'));
@@ -261,34 +261,34 @@ export class TutorialScene extends Phaser.Scene {
         const contentWidth = (this.panelRight - this.panelLeft) - pad * 2;
 
         // Page title — inside the panel, top area
-        const titleSize = Math.round(13 * scale);
+        const titleSize = Math.round(26 * scale);
         const title = this.add.text(width / 2, contentTop, page.title, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${titleSize}px`,
             color: '#ff6600',
             stroke: '#000000',
-            strokeThickness: 4,
+            strokeThickness: 8,
             wordWrap: { width: contentWidth, useAdvancedWrap: true }
         }).setOrigin(0.5, 0);
         this.pageElements.push(title);
 
         // Divider under title
-        const dividerY = contentTop + title.height + 8;
+        const dividerY = contentTop + title.height + 16;
         const divider = this.add.graphics();
-        divider.lineStyle(1, 0xff6600, 0.4);
+        divider.lineStyle(2, 0xff6600, 0.4);
         divider.lineBetween(contentLeft, dividerY, this.panelRight - pad, dividerY);
         this.pageElements.push(divider);
 
         // Content lines — font size adapts so all lines fit between divider and panel bottom
-        const linesStartY = dividerY + 10;
+        const linesStartY = dividerY + 20;
         const availableH = (this.panelBottom - pad) - linesStartY;
         const lineCount = page.lines.length;
 
-        // Calculate line height to fit, but cap font size at 8*scale
-        const maxLineSize = Math.round(8 * scale);
+        // Calculate line height to fit, but cap font size at 16*scale
+        const maxLineSize = Math.round(16 * scale);
         const idealLineH = Math.floor(availableH / Math.max(lineCount, 1));
-        const lineH = Math.min(idealLineH, Math.round(18 * scale));
-        const lineSize = Math.min(maxLineSize, Math.max(6, lineH - 6));
+        const lineH = Math.min(idealLineH, Math.round(36 * scale));
+        const lineSize = Math.min(maxLineSize, Math.max(12, lineH - 12));
 
         const centerX = this.panelLeft + (this.panelRight - this.panelLeft) / 2;
 
@@ -299,7 +299,7 @@ export class TutorialScene extends Phaser.Scene {
                 fontSize: `${lineSize}px`,
                 color: color,
                 stroke: '#000000',
-                strokeThickness: 1,
+                strokeThickness: 2,
                 align: 'center',
                 wordWrap: { width: contentWidth, useAdvancedWrap: true }
             }).setOrigin(0.5, 0);

@@ -1,11 +1,11 @@
 {
     "nodes": [
-        { "id": "start", "x": 80, "y": 360, "label": "Entrance", "type": "start" },
-        { "id": "training_zone", "x": 280, "y": 380, "label": "Training Zone", "type": "training" },
-        { "id": "alchemist_a", "x": 160, "y": 280, "label": "Sinkhole", "type": "villain", "requiredDefeated": null, "villainId": "alchemist_a" },
-        { "id": "junky_j", "x": 320, "y": 200, "label": "Playground", "type": "villain", "requiredDefeated": "alchemist_a", "villainId": "junky_j" },
-        { "id": "dopey_d", "x": 450, "y": 140, "label": "Splash Park", "type": "villain", "requiredDefeated": "junky_j", "villainId": "dopey_d" },
-        { "id": "tweaker_t", "x": 590, "y": 50, "label": "4 Way Stop", "type": "villain", "requiredDefeated": "dopey_d", "villainId": "tweaker_t" }
+        { "id": "start", "x": 160, "y": 720, "label": "Entrance", "type": "start" },
+        { "id": "training_zone", "x": 560, "y": 760, "label": "Training Zone", "type": "training" },
+        { "id": "alchemist_a", "x": 320, "y": 560, "label": "Sinkhole", "type": "villain", "requiredDefeated": null, "villainId": "alchemist_a" },
+        { "id": "junky_j", "x": 640, "y": 400, "label": "Playground", "type": "villain", "requiredDefeated": "alchemist_a", "villainId": "junky_j" },
+        { "id": "dopey_d", "x": 900, "y": 280, "label": "Splash Park", "type": "villain", "requiredDefeated": "junky_j", "villainId": "dopey_d" },
+        { "id": "tweaker_t", "x": 1180, "y": 100, "label": "4 Way Stop", "type": "villain", "requiredDefeated": "dopey_d", "villainId": "tweaker_t" }
     ],
     "edges": [
         ["start", "training_zone"],

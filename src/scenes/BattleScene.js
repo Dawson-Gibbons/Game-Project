@@ -40,7 +40,7 @@ export class BattleScene extends Phaser.Scene {
             this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
         }
         // Ground line
-        this.add.rectangle(width / 2, height * 0.55, width, 2, 0x333355);
+        this.add.rectangle(width / 2, height * 0.55, width, 4, 0x333355);
 
         // Phase transition overlay (hidden initially)
         this.phaseOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0xff0000, 0);
@@ -72,19 +72,19 @@ export class BattleScene extends Phaser.Scene {
         // Villain sprite (upper right)
         if (this.villainData.spriteKey) {
             this.villainSprite = this.add.image(width * 0.72, height * 0.38, this.villainData.spriteKey);
-            this.scaleToFit(this.villainSprite, 195, 195);
+            this.scaleToFit(this.villainSprite, 390, 390);
         } else {
             // Training dummy placeholder
-            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.38, 100, 120, 0x886644);
+            this.villainSprite = this.add.rectangle(width * 0.72, height * 0.38, 200, 240, 0x886644);
             const dummyLabel = this.add.text(width * 0.72, height * 0.38, '?', {
-                fontFamily: 'monospace', fontSize: '48px', color: '#ffffff'
+                fontFamily: '"Press Start 2P"', fontSize: '96px', color: '#ffffff'
             }).setOrigin(0.5);
         }
 
 
         // Player sprite (lower left)
         this.playerSprite = this.add.image(width * 0.22, height * 0.45, this.player.getPlayerSpriteKey().big);
-        this.scaleToFit(this.playerSprite, 180, 180);
+        this.scaleToFit(this.playerSprite, 360, 360);
 
     }
 
@@ -96,35 +96,35 @@ export class BattleScene extends Phaser.Scene {
     }
 
     setupUI(width, height) {
-        // Villain HP bar — y=44 gives label room above it (label sits at y≈26)
-        this.villainHpBar = new HealthBar(this, width * 0.52, 44, 200, 14, this.villainData.hp, 0xcc4444);
+        // Villain HP bar
+        this.villainHpBar = new HealthBar(this, width * 0.52, 88, 400, 28, this.villainData.hp, 0xcc4444);
         this.villainHpBar.setLabel(this.villainData.name);
         this.villainHpBar.setValue(this.villainData.hp, this.villainData.hp);
 
-        // Player HP bar — pushed down to 0.68 so label clears the player sprite (~y262)
-        this.playerHpBar = new HealthBar(this, 30, height * 0.58, 180, 14, this.player.maxHp, 0x44cc44);
+        // Player HP bar
+        this.playerHpBar = new HealthBar(this, 60, height * 0.58, 360, 28, this.player.maxHp, 0x44cc44);
         this.playerHpBar.setLabel('Elmwood Warrior');
         this.playerHpBar.setValue(this.player.hp, this.player.maxHp);
 
-        // Player Stamina bar — 26px below HP bar, leaves gap before text box at height-110
-        this.playerStaminaBar = new StaminaBar(this, 30, height * 0.58 + 36, 180, 10, this.player.maxStamina);
+        // Player Stamina bar
+        this.playerStaminaBar = new StaminaBar(this, 60, height * 0.58 + 72, 360, 20, this.player.maxStamina);
         this.playerStaminaBar.setLabel('Stamina');
         this.playerStaminaBar.setValue(this.player.stamina, this.player.maxStamina);
 
         // Lives display (top right)
-        this.livesText = this.add.text(width - 10, 6, this.getLivesString(), {
-            fontFamily: 'monospace',
-            fontSize: '32px',
+        this.livesText = this.add.text(width - 20, 12, this.getLivesString(), {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '64px',
             color: '#ff4444',
             stroke: '#ffffff',
-            strokeThickness: 3
+            strokeThickness: 6
         }).setOrigin(1, 0);
 
         // Text box (bottom of screen)
-        this.textBox = new TextBox(this, 10, height - 110, width * 0.48, 100);
+        this.textBox = new TextBox(this, 20, height - 220, width * 0.48, 200);
 
         // Battle menu (bottom right)
-        this.battleMenu = new BattleMenu(this, width * 0.5, height - 110, width * 0.48, 100);
+        this.battleMenu = new BattleMenu(this, width * 0.5, height - 220, width * 0.48, 200);
     }
 
     showMessage(text, duration = 1200) {
@@ -396,23 +396,23 @@ export class BattleScene extends Phaser.Scene {
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.8).setDepth(200);
 
         this.add.text(width / 2, height * 0.25, 'VICTORY!', {
-            fontFamily: 'monospace',
-            fontSize: '48px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '96px',
             fontStyle: 'bold',
             color: '#ffcc00',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 8
         }).setOrigin(0.5).setDepth(201);
 
         this.add.text(width / 2, height * 0.42, 'Elmwood Park is safe!', {
-            fontFamily: 'monospace',
-            fontSize: '20px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '40px',
             color: '#ffffff'
         }).setOrigin(0.5).setDepth(201);
 
         const mapBtn = this.add.text(width / 2, height * 0.58, '[ Return to Map ]', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '36px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
 
@@ -424,8 +424,8 @@ export class BattleScene extends Phaser.Scene {
         });
 
         const titleBtn = this.add.text(width / 2, height * 0.72, '[ Return to Title ]', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '36px',
             color: '#999999'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
 
@@ -440,15 +440,15 @@ export class BattleScene extends Phaser.Scene {
         // Place buttons in the battle-menu area (right half of bottom panel) so they
         // don't overlap the TextBox on the left.
         const centerX = width * 0.74;
-        const panelBg = this.add.rectangle(centerX, height - 55, width * 0.48, 80, 0x111111, 0.9);
-        panelBg.setStrokeStyle(2, 0xff4444);
+        const panelBg = this.add.rectangle(centerX, height - 110, width * 0.48, 160, 0x111111, 0.9);
+        panelBg.setStrokeStyle(4, 0xff4444);
 
-        const retryBtn = this.add.text(centerX, height - 75, '[ Try Again ]', {
-            fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
+        const retryBtn = this.add.text(centerX, height - 150, '[ Try Again ]', {
+            fontFamily: '"Press Start 2P"', fontSize: '32px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-        const returnBtn = this.add.text(centerX, height - 40, '[ Return to Map ]', {
-            fontFamily: 'monospace', fontSize: '16px', color: '#ffffff'
+        const returnBtn = this.add.text(centerX, height - 80, '[ Return to Map ]', {
+            fontFamily: '"Press Start 2P"', fontSize: '32px', color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         retryBtn.on('pointerover', () => retryBtn.setColor('#ff6600'));
@@ -472,23 +472,23 @@ export class BattleScene extends Phaser.Scene {
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85).setDepth(200);
 
         this.add.text(width / 2, height * 0.25, 'GAME OVER', {
-            fontFamily: 'monospace',
-            fontSize: '48px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '96px',
             fontStyle: 'bold',
             color: '#ff4444',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 8
         }).setOrigin(0.5).setDepth(201);
 
         this.add.text(width / 2, height * 0.42, 'All lives lost...', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '36px',
             color: '#ffffff'
         }).setOrigin(0.5).setDepth(201);
 
         const restartBtn = this.add.text(width / 2, height * 0.60, '[ Play Again ]', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '36px',
             color: '#ffffff'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(201);
 
