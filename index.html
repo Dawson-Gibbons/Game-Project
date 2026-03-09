@@ -5,11 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Elmwood Warrior</title>
     <!-- <link rel="stylesheet" href="style.css"> -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="Assets/daniel_small.png"/>
     <style>
+        @font-face {
+            font-family: 'Press Start 2P';
+            src: url('Assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Libertinus Math';
+            src: url('Assets/fonts/Libertinus_Math/LibertinusMath-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
         * { margin: 0; padding: 0; }
         body { overflow: hidden; background: #000; }
+        canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
     </style>
 </head>
 <body>

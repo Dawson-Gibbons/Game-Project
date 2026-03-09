@@ -10,9 +10,10 @@ import { TutorialScene } from '../scenes/TutorialScene.js';
 export const gameConfig = {
     type: Phaser.AUTO,
     parent: 'game-container',
-    width: 800,
-    height: 450,
-    pixelArt: false,
+    width: 1600,
+    height: 900,
+    pixelArt: true,
+    antialias: false,
     roundPixels: true,
     scale: {
         mode: Phaser.Scale.FIT,

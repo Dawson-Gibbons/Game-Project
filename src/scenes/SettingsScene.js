@@ -30,16 +30,16 @@ export class SettingsScene extends Phaser.Scene {
         this.add.rectangle(width / 2, height / 2, width, height, 0x111111);
 
         // Title
-        this.add.text(width / 2, 28, 'SETTINGS', {
+        this.add.text(width / 2, 56, 'SETTINGS', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '16px',
+            fontSize: '32px',
             color: '#ff6600',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 6
         }).setOrigin(0.5);
 
-        const startY = 75;
-        const rowH = 55;
+        const startY = 150;
+        const rowH = 110;
         let row = 0;
 
         // Text Size
@@ -86,7 +86,7 @@ export class SettingsScene extends Phaser.Scene {
         row += 0.3;
         const deleteBtn = this.add.text(width / 2, startY + rowH * row, '[ Delete Save Data ]', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#cc4444'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -95,9 +95,9 @@ export class SettingsScene extends Phaser.Scene {
         deleteBtn.on('pointerdown', () => this.confirmDeleteSave(deleteBtn));
 
         // Back button
-        const backBtn = this.add.text(width / 2, height - 30, '< Back', {
+        const backBtn = this.add.text(width / 2, height - 60, '< Back', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true });
 
@@ -109,13 +109,13 @@ export class SettingsScene extends Phaser.Scene {
     createCycleOption(width, y, label, options, currentIndex, onChange) {
         this.add.text(width * 0.46, y, label, {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#cccccc'
         }).setOrigin(1, 0.5);
 
         const valueText = this.add.text(width * 0.54, y, `< ${options[currentIndex]} >`, {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#ffffff'
         }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
@@ -131,13 +131,13 @@ export class SettingsScene extends Phaser.Scene {
     createToggleOption(width, y, label, currentVal, onChange) {
         this.add.text(width * 0.46, y, label, {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: '#cccccc'
         }).setOrigin(1, 0.5);
 
         const valueText = this.add.text(width * 0.54, y, currentVal ? 'ON' : 'OFF', {
             fontFamily: '"Press Start 2P"',
-            fontSize: '10px',
+            fontSize: '20px',
             color: currentVal ? '#44cc44' : '#cc4444'
         }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 

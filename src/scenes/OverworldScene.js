@@ -54,7 +54,7 @@ export class OverworldScene extends Phaser.Scene {
         const graphics = this.add.graphics();
 
         // Outer glow / outline (dark border behind path)
-        graphics.lineStyle(hc ? 9 : 7, 0x000000, hc ? 0.7 : 0.5);
+        graphics.lineStyle(hc ? 18 : 14, 0x000000, hc ? 0.7 : 0.5);
         this.nodesData.edges.forEach(([fromId, toId]) => {
             const fromNode = this.nodesData.nodes.find(n => n.id === fromId);
             const toNode = this.nodesData.nodes.find(n => n.id === toId);
@@ -67,7 +67,7 @@ export class OverworldScene extends Phaser.Scene {
         });
 
         // Main path line
-        graphics.lineStyle(hc ? 5 : 3, hc ? 0xffffff : 0xccaa66, hc ? 0.9 : 0.7);
+        graphics.lineStyle(hc ? 10 : 6, hc ? 0xffffff : 0xccaa66, hc ? 0.9 : 0.7);
         this.nodesData.edges.forEach(([fromId, toId]) => {
             const fromNode = this.nodesData.nodes.find(n => n.id === fromId);
             const toNode = this.nodesData.nodes.find(n => n.id === toId);
@@ -109,17 +109,17 @@ export class OverworldScene extends Phaser.Scene {
             alpha = hc ? 0.7 : 0.5;
         }
 
-        const nodeRadius = hc ? 18 : 16;
+        const nodeRadius = hc ? 36 : 32;
 
         // Draw filled circle
         graphics.fillStyle(fillColor, alpha);
         graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius);
-        graphics.lineStyle(hc ? 3 : 2, strokeColor, alpha);
+        graphics.lineStyle(hc ? 6 : 4, strokeColor, alpha);
         graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius);
 
         // Pulsing animation for current node
         if (isCurrent) {
-            const pulse = this.add.circle(nodeData.x, nodeData.y, 18, 0xffcc00, 0.3);
+            const pulse = this.add.circle(nodeData.x, nodeData.y, 36, 0xffcc00, 0.3);
             this.tweens.add({
                 targets: pulse,
                 scaleX: 1.4,
@@ -139,8 +139,8 @@ export class OverworldScene extends Phaser.Scene {
         else symbol = '!';
 
         const scale = SettingsScene.getTextScale();
-        const symbolSize = Math.round(10 * scale);
-        const labelSize = Math.round(7 * scale);
+        const symbolSize = Math.round(20 * scale);
+        const labelSize = Math.round(14 * scale);
 
         this.add.text(nodeData.x, nodeData.y, symbol, {
             fontFamily: '"Press Start 2P"',
@@ -152,33 +152,33 @@ export class OverworldScene extends Phaser.Scene {
         const isKnown = isAccessible || isDefeated || isTrainingDone;
         const labelColor = isKnown ? '#ffffff' : (hc ? '#bbbbbb' : '#999999');
         let label = isKnown ? nodeData.label : '???';
-        this.add.text(nodeData.x, nodeData.y + nodeRadius + 10, label, {
+        this.add.text(nodeData.x, nodeData.y + nodeRadius + 20, label, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${labelSize}px`,
             color: labelColor,
             stroke: '#000000',
-            strokeThickness: isKnown ? (hc ? 3 : 2) : 4,
-            shadow: isKnown ? {} : { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
+            strokeThickness: isKnown ? (hc ? 6 : 4) : 8,
+            shadow: isKnown ? {} : { offsetX: 2, offsetY: 2, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5, 0);
 
         // Make accessible villain/training nodes clickable
         if (isAccessible && !isDefeated && !isTrainingDone && nodeData.type !== NODE_TYPES.START) {
-            const hitArea = this.add.circle(nodeData.x, nodeData.y, nodeRadius + 6, 0xffffff, 0.001);
+            const hitArea = this.add.circle(nodeData.x, nodeData.y, nodeRadius + 12, 0xffffff, 0.001);
             hitArea.setInteractive({ useHandCursor: true });
 
             hitArea.on('pointerover', () => {
                 graphics.clear();
                 graphics.fillStyle(0xff6600, 1);
-                graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius + 2);
-                graphics.lineStyle(hc ? 3 : 2, 0xffffff, 1);
-                graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius + 2);
+                graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius + 4);
+                graphics.lineStyle(hc ? 6 : 4, 0xffffff, 1);
+                graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius + 4);
             });
 
             hitArea.on('pointerout', () => {
                 graphics.clear();
                 graphics.fillStyle(fillColor, alpha);
                 graphics.fillCircle(nodeData.x, nodeData.y, nodeRadius);
-                graphics.lineStyle(hc ? 3 : 2, strokeColor, alpha);
+                graphics.lineStyle(hc ? 6 : 4, strokeColor, alpha);
                 graphics.strokeCircle(nodeData.x, nodeData.y, nodeRadius);
             });
 
@@ -194,15 +194,15 @@ export class OverworldScene extends Phaser.Scene {
         const currentNode = this.nodesData.nodes.find(n => n.id === this.player.currentNodeId);
         if (!currentNode) return;
 
-        this.playerSprite = this.add.image(currentNode.x, currentNode.y - 28, this.player.getPlayerSpriteKey().small);
-        const scale = Math.min(48 / this.playerSprite.width, 48 / this.playerSprite.height);
+        this.playerSprite = this.add.image(currentNode.x, currentNode.y - 56, this.player.getPlayerSpriteKey().small);
+        const scale = Math.min(96 / this.playerSprite.width, 96 / this.playerSprite.height);
         this.playerSprite.setScale(scale);
         this.playerSprite.setDepth(10);
 
         // Gentle bobbing animation
         this.tweens.add({
             targets: this.playerSprite,
-            y: currentNode.y - 32,
+            y: currentNode.y - 64,
             duration: 800,
             yoyo: true,
             repeat: -1,
@@ -224,14 +224,14 @@ export class OverworldScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.playerSprite,
             x: nodeData.x,
-            y: nodeData.y - 28,
+            y: nodeData.y - 56,
             duration: Math.round(400 / animSpeed),
             ease: 'Power2',
             onComplete: () => {
                 // Restart bobbing at new position
                 this.tweens.add({
                     targets: this.playerSprite,
-                    y: nodeData.y - 32,
+                    y: nodeData.y - 64,
                     duration: 800,
                     yoyo: true,
                     repeat: -1,
@@ -289,28 +289,28 @@ export class OverworldScene extends Phaser.Scene {
     createTokenShop(width, height) {
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(7 * scale);
-        const lineHeight = Math.round(14 * scale);
+        const fontSize = Math.round(14 * scale);
+        const lineHeight = Math.round(28 * scale);
 
-        const shopWidth = Math.round(160 * scale);
-        const shopX = width - shopWidth - 6;
-        const shopBottomMargin = 34; // above bottom bar
+        const shopWidth = Math.round(320 * scale);
+        const shopX = width - shopWidth - 12;
+        const shopBottomMargin = 68; // above bottom bar
         const shopItems = this.getShopItems();
-        const shopHeight = 20 + shopItems.length * lineHeight + 8;
+        const shopHeight = 40 + shopItems.length * lineHeight + 16;
         const shopY = height - shopBottomMargin - shopHeight;
 
         // Shop background
         this.shopContainer = this.add.container(0, 0).setDepth(50);
 
         // Stat bar above shop
-        const statFontSize = Math.round(6 * scale);
-        const statLineH = Math.round(12 * scale);
-        const statH = statLineH * 3 + 8;
+        const statFontSize = Math.round(12 * scale);
+        const statLineH = Math.round(24 * scale);
+        const statH = statLineH * 3 + 16;
         const statY = shopY - statH;
         const dmgPercent = Math.round((this.player.getDamageMultiplier() - 1) * 100);
 
         const statShadow = this.add.rectangle(
-            shopX + shopWidth / 2 + 3, statY + statH / 2 + 3,
+            shopX + shopWidth / 2 + 6, statY + statH / 2 + 6,
             shopWidth, statH, 0x000000, 0.4
         );
         this.shopContainer.add(statShadow);
@@ -319,7 +319,7 @@ export class OverworldScene extends Phaser.Scene {
             shopX + shopWidth / 2, statY + statH / 2,
             shopWidth, statH, 0x111111, hc ? 0.95 : 0.88
         );
-        statBg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x888888);
+        statBg.setStrokeStyle(hc ? 4 : 2, hc ? 0xffffff : 0x888888);
         this.shopContainer.add(statBg);
 
         const statLines = [
@@ -328,7 +328,7 @@ export class OverworldScene extends Phaser.Scene {
             `Stamina: ${this.player.maxStamina}`
         ];
         statLines.forEach((line, i) => {
-            const text = this.add.text(shopX + 6, statY + 4 + i * statLineH, line, {
+            const text = this.add.text(shopX + 12, statY + 8 + i * statLineH, line, {
                 fontFamily: '"Press Start 2P"',
                 fontSize: `${statFontSize}px`,
                 color: '#aaaaaa'
@@ -338,30 +338,30 @@ export class OverworldScene extends Phaser.Scene {
 
         // Divider line between stat bar and shop
         const divider = this.add.rectangle(
-            shopX + shopWidth / 2, shopY, shopWidth, 2, 0xaaaaaa, 1
+            shopX + shopWidth / 2, shopY, shopWidth, 4, 0xaaaaaa, 1
         );
         this.shopContainer.add(divider);
 
         // Dev mode: +tokens panel above stat bar
         if (SettingsScene.isDevMode()) {
-            const devH = 30;
-            const devY = statY - devH - 4;
+            const devH = 60;
+            const devY = statY - devH - 8;
             const devBg = this.add.rectangle(
                 shopX + shopWidth / 2, devY + devH / 2,
                 shopWidth, devH, 0x331100, 0.9
             );
-            devBg.setStrokeStyle(1, 0xff6600);
+            devBg.setStrokeStyle(2, 0xff6600);
             this.shopContainer.add(devBg);
 
-            const devLabel = this.add.text(shopX + 4, devY + 3, '+T', {
-                fontFamily: '"Press Start 2P"', fontSize: `${Math.round(6 * scale)}px`, color: '#ff6600'
+            const devLabel = this.add.text(shopX + 8, devY + 6, '+T', {
+                fontFamily: '"Press Start 2P"', fontSize: `${Math.round(12 * scale)}px`, color: '#ff6600'
             });
             this.shopContainer.add(devLabel);
 
             const amounts = [10, 50, 100, 500];
             amounts.forEach((amt, i) => {
-                const btn = this.add.text(shopX + 28 + i * 34, devY + devH / 2, `${amt}`, {
-                    fontFamily: '"Press Start 2P"', fontSize: `${Math.round(6 * scale)}px`, color: '#ffffff'
+                const btn = this.add.text(shopX + 56 + i * 68, devY + devH / 2, `${amt}`, {
+                    fontFamily: '"Press Start 2P"', fontSize: `${Math.round(12 * scale)}px`, color: '#ffffff'
                 }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
                 btn.on('pointerover', () => btn.setColor('#ff6600'));
@@ -377,7 +377,7 @@ export class OverworldScene extends Phaser.Scene {
 
         // Drop shadow behind shop
         const shadow = this.add.rectangle(
-            shopX + shopWidth / 2 + 3, shopY + shopHeight / 2 + 3,
+            shopX + shopWidth / 2 + 6, shopY + shopHeight / 2 + 6,
             shopWidth, shopHeight, 0x000000, 0.4
         );
         this.shopContainer.add(shadow);
@@ -386,11 +386,11 @@ export class OverworldScene extends Phaser.Scene {
             shopX + shopWidth / 2, shopY + shopHeight / 2,
             shopWidth, shopHeight, 0x111111, hc ? 0.95 : 0.88
         );
-        bg.setStrokeStyle(hc ? 2 : 1, hc ? 0xffffff : 0x888888);
+        bg.setStrokeStyle(hc ? 4 : 2, hc ? 0xffffff : 0x888888);
         this.shopContainer.add(bg);
 
         // Title with token count
-        const title = this.add.text(shopX + 6, shopY + 4, `Shop [${this.player.tokens}T]`, {
+        const title = this.add.text(shopX + 12, shopY + 8, `Shop [${this.player.tokens}T]`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${fontSize}px`,
             color: '#ffcc00'
@@ -399,13 +399,13 @@ export class OverworldScene extends Phaser.Scene {
 
         // Shop items
         shopItems.forEach((item, i) => {
-            const yPos = shopY + 18 + i * lineHeight;
+            const yPos = shopY + 36 + i * lineHeight;
             const canAfford = this.player.tokens >= item.cost;
             const color = canAfford ? '#ffffff' : (hc ? '#666666' : '#555555');
 
-            const label = this.add.text(shopX + 6, yPos, `${item.label} [${item.cost}T]`, {
+            const label = this.add.text(shopX + 12, yPos, `${item.label} [${item.cost}T]`, {
                 fontFamily: '"Press Start 2P"',
-                fontSize: `${Math.round(6 * scale)}px`,
+                fontSize: `${Math.round(12 * scale)}px`,
                 color: color
             }).setInteractive({ useHandCursor: canAfford });
 
@@ -454,46 +454,46 @@ export class OverworldScene extends Phaser.Scene {
     createHUD(width, height) {
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const hudFontSize = Math.round(8 * scale);
+        const hudFontSize = Math.round(16 * scale);
 
         // HUD background
-        this.add.rectangle(width / 2, 14, width, 28, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, 28, width, 56, 0x000000, hc ? 0.9 : 0.7);
 
         // Player info
-        this.add.text(8, 5, 'Elmwood Warrior', {
+        this.add.text(16, 10, 'Elmwood Warrior', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffcc00'
         });
 
         // Token display
-        this.add.text(width - 8, 5, `Tokens:${this.player.tokens}`, {
+        this.add.text(width - 16, 10, `Tokens:${this.player.tokens}`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#dddddd' : '#aaaaaa'
         }).setOrigin(1, 0);
 
         // Lives display (below Tokens, on map)
-        this.add.text(width - 8, 30, '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0', {
-            fontFamily: 'monospace',
-            fontSize: `${Math.round(14 * scale)}px`,
+        this.add.text(width - 16, 60, '\u2665 '.repeat(this.player.lives).trim() || '\u2665 0', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: `${Math.round(28 * scale)}px`,
             color: '#ff4444',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 4
         }).setOrigin(1, 0);
 
         // Defeated count
         const defeated = this.player.defeatedVillains.length;
-        this.add.text(width * 0.63, 5, `Defeated:${defeated}/4`, {
+        this.add.text(width * 0.63, 10, `Defeated:${defeated}/4`, {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: hc ? '#88ff88' : '#88cc88'
         }).setOrigin(0.5, 0);
 
         // Bottom bar with back and settings buttons
-        this.add.rectangle(width / 2, height - 14, width, 28, 0x000000, hc ? 0.9 : 0.7);
+        this.add.rectangle(width / 2, height - 28, width, 56, 0x000000, hc ? 0.9 : 0.7);
 
-        const backBtn = this.add.text(10, height - 14, '< Title', {
+        const backBtn = this.add.text(20, height - 28, '< Title', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'
@@ -503,7 +503,7 @@ export class OverworldScene extends Phaser.Scene {
         backBtn.on('pointerout', () => backBtn.setColor('#ffffff'));
         backBtn.on('pointerdown', () => this.scene.start(SCENES.TITLE));
 
-        const settingsBtn = this.add.text(width - 10, height - 14, 'Settings >', {
+        const settingsBtn = this.add.text(width - 20, height - 28, 'Settings >', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${hudFontSize}px`,
             color: '#ffffff'

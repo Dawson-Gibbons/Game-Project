@@ -13,23 +13,23 @@ export class TextBox {
 
         const hc = SettingsScene.isHighContrast();
         const scale = SettingsScene.getTextScale();
-        const fontSize = Math.round(9 * scale);
+        const fontSize = Math.round(18 * scale);
 
         // Semi-transparent background
         this.bg = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, hc ? 0.95 : 0.85);
-        this.bg.setStrokeStyle(hc ? 3 : 2, hc ? 0xffffff : 0x555555);
+        this.bg.setStrokeStyle(hc ? 6 : 4, hc ? 0xffffff : 0x555555);
 
         // Text content
-        this.text = scene.add.text(x + 12, y + 12, '', {
+        this.text = scene.add.text(x + 24, y + 24, '', {
             fontFamily: '"Press Start 2P"',
             fontSize: `${fontSize}px`,
             color: '#ffffff',
-            wordWrap: { width: width - 24 }
+            wordWrap: { width: width - 48 }
         });
 
         // Click-to-advance indicator
-        this.indicator = scene.add.text(x + width - 20, y + height - 18, '▼', {
-            fontFamily: '"Press Start 2P"', fontSize: '9px', color: hc ? '#ffffff' : '#aaaaaa'
+        this.indicator = scene.add.text(x + width - 40, y + height - 36, '▼', {
+            fontFamily: '"Press Start 2P"', fontSize: '18px', color: hc ? '#ffffff' : '#aaaaaa'
         }).setVisible(false);
 
         this.setVisible(false);
